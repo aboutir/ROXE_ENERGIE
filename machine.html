@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centre des revenus</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: url('https://image.noelshack.com/fichiers/2025/29/7/1752967991-fond-communication-reseau-abstrait-3d-conception-particules-fluides-1048-16923.jpg') no-repeat center center fixed;
+            background-size: cover;
+            padding: 12px;
+            max-width: 480px;
+            margin: 0 auto;
+            color: white;
+        }
+
+        .header {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 20px;
+            padding: 10px 0;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(77, 184, 255, 0.7);
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #4db8ff, #667eea);
+            border-radius: 3px;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(5px);
+            padding: 15px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(77, 184, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            border-color: rgba(77, 184, 255, 0.4);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: #4db8ff;
+        }
+
+        #vips-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 80px;
+        }
+
+        .vip-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            border: 1px solid rgba(77, 184, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .vip-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(77, 184, 255, 0.2);
+            border-color: rgba(77, 184, 255, 0.3);
+        }
+
+        .vip-header {
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(30, 41, 59, 0.6);
+        }
+
+        .vip-logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #4db8ff, #667eea);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0f172a;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            background-size: cover;
+            background-position: center;
+        }
+
+        .vip-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        .vip-subtitle {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-top: 3px;
+        }
+
+        .vip-details {
+            padding: 15px;
+            font-size: 14px;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .progress-container {
+            padding: 0 15px 15px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4db8ff, #667eea);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .collect-btn {
+            display: block;
+            width: calc(100% - 30px);
+            margin: 0 15px 15px;
+            padding: 12px;
+            background: linear-gradient(135deg, #4db8ff, #667eea);
+            border: none;
+            border-radius: 12px;
+            color: #0f172a;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(77, 184, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .collect-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(77, 184, 255, 0.4);
+            background: linear-gradient(135deg, #5ac1ff, #768bf0);
+        }
+
+        .collect-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 30px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: none;
+            text-align: center;
+            max-width: 90%;
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, #4db8ff, #667eea);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #94a3b8;
+        }
+
+        .loading i {
+            font-size: 24px;
+            margin-bottom: 10px;
+            display: block;
+            color: #4db8ff;
+        }
+
+        /* Navigation */
+        .navigation {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            max-width: 480px;
+            margin: 0 auto;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            flex: 1;
+            padding: 11px 3px;
+            text-align: center;
+            color: #666;
+            font-size: 11px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 15px;
+            margin: 0 4px;
+            background: rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-item.active::before {
+            opacity: 1;
+        }
+
+        .nav-item.active {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+        }
+
+        .nav-item:hover {
+            color: #667eea;
+            transform: translateY(-1px);
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .nav-icon {
+            margin-bottom: 3px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .nav-icon i {
+            font-size: 14px;
+            display: block;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .nav-item.active {
+            color: #4db8ff;
+            background: rgba(77, 184, 255, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .nav-text {
+            font-size: 12px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">Centre des revenus</div>
+    
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="stat-label"><i class="fas fa-box"></i> Total des produits</div>
+            <div class="stat-value" id="total-vips">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label"><i class="fas fa-coins"></i> Bénéfice gagné</div>
+            <div class="stat-value" id="total-revenue">0 FCFA</div>
+        </div>
+    </div>
+
+    <div id="vips-container">
+        <div class="loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Chargement de vos investissements...</p>
+        </div>
+    </div>
+
+    <div class="notification"></div>
+    
+    <!-- Navigation -->
+     <div class="navigation">
+            <a href="accueil.html" class="nav-item active">
+                <div class="nav-icon"><i class="fas fa-home"></i></div>
+                <div>Accueil</div>
+            </a>
+            <a href="machine.html" class="nav-item">
+                <div class="nav-icon"><i class="fas fa-ship"></i></div>
+                <div>Mes produits</div>
+            </a>
+            <a href="investir.html" class="nav-item">
+                <div class="nav-icon"><i class="fas fa-coins"></i></div>
+                <div>Achats </div>
+            </a>
+            <a href="solde.html" class="nav-item">
+                <div class="nav-icon"><i class="fas fa-user"></i></div>
+                <div>Compte</div>
+            </a>
+    </div>
+
+     <script type="module">
+// ========================================
+// IMPORTS FIREBASE
+// ========================================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { 
+  getDatabase, 
+  ref, 
+  get, 
+  set, 
+  update, 
+  push, 
+  onValue, 
+  query, 
+  orderByChild, 
+  equalTo 
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+// ========================================
+// CONFIGURATION FIREBASE
+// ========================================
+const firebaseConfig = {
+  apiKey: "AIzaSyB3pmvbQlu7LPLoE15mLI6fqRbOq2vSe3w",
+  authDomain: "rox-deff1.firebaseapp.com",
+  databaseURL: "https://rox-deff1-default-rtdb.firebaseio.com",
+  projectId: "rox-deff1",
+  storageBucket: "rox-deff1.firebasestorage.app",
+  messagingSenderId: "42974600657",
+  appId: "1:42974600657:web:816ebe30f5a7e4ac1094f0"
+};
+    /**
+     * Configuration des VIPs
+     */
+    const VIP_CONFIG = {
+        1: {
+            nom: "Pack Mini ROX",
+            dailyRevenue: 400,
+            cycleDuration: 20,
+            totalRevenue: 8000,
+            price: 5000,
+            limit: 1,
+            image: "https://image.noelshack.com/fichiers/2025/30/1/1753049201-images-3.jpeg"
+        },
+        2: {
+            nom: "Pack Start ÉNERGIE",
+            dailyRevenue: 700,
+            cycleDuration: 25,
+            totalRevenue: 17500,
+            price: 10000,
+            limit: 2,
+            image: "https://image.noelshack.com/fichiers/2025/30/1/1753049424-images-4.jpeg"
+        },
+        3: {
+            nom: "Pack Active Power",
+            dailyRevenue: 1500,
+            cycleDuration: 30,
+            totalRevenue: 45000,
+            price: 20000,
+            limit: 2,
+            image: "https://image.noelshack.com/fichiers/2025/30/1/1753049513-images-5.jpeg"
+        },
+        4: {
+            nom: "Pack Boost ROX",
+            dailyRevenue: 2700,
+            cycleDuration: 30,
+            totalRevenue: 81000,
+            price: 35000,
+            limit: 2,
+            image: "https://image.noelshack.com/fichiers/2025/30/1/1753049595-images-6.jpeg"
+        },
+        5: {
+            nom: "Pack Élite Force",
+            dailyRevenue: 4000,
+            cycleDuration: 32,
+            totalRevenue: 128000,
+            price: 50000,
+            limit: 2,
+            image: "https://image.noelshack.com/fichiers/2025/30/1/1753049670-images-7.jpeg"
+        },
+        6: {
+            nom: "Pack Suprême ÉNERGIE",
+            dailyRevenue: 8000,
+            cycleDuration: 35,
+            totalRevenue: 280000,
+            price: 100000,
+            limit: 4,
+            image: "https://image.noelshack.com/fichiers/2025/30/1/1753049786-images.png"
+        },
+        7: {
+            nom: "Msc-bugatti",
+            dailyRevenue: 25000,
+            cycleDuration: 62,
+            totalRevenue: 1550000,
+            price: 1000000,
+            limit: 4,
+            image: "https://image.noelshack.com/fichiers/2025/13/7/1743360963-img-20250329-wa0021.jpg"
+        }
+    };    
+
+    // Initialisation Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+    let currentUser = null;
+
+    /**
+     * Affiche une notification à l'utilisateur
+     */
+    function showNotification(message, type) {
+        const notification = document.querySelector('.notification');
+        if (notification) {
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+            setTimeout(() => notification.style.display = 'none', 3000);
+        } else {
+            // Fallback si l'élément notification n'existe pas
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+    }
+
+    /**
+     * Calcule la progression d'un cycle d'investissement
+     */
+    function calculateCycleProgress(investment) {
+        const config = VIP_CONFIG[investment.productId];
+        if (!config) return { isComplete: true, progress: 100, remainingDays: 0 };
+        
+        const totalCollected = investment.totalCollected || 0;
+        const progress = Math.round((totalCollected / config.totalRevenue) * 100);
+        const daysInCycle = Math.floor((Date.now() - investment.timestamp) / (1000 * 60 * 60 * 24));
+        const remainingDays = Math.max(0, config.cycleDuration - daysInCycle);
+        
+        return {
+            isComplete: totalCollected >= config.totalRevenue,
+            progress: Math.min(progress, 100),
+            remainingDays
+        };
+    }
+
+    /**
+     * Vérifie si l'utilisateur peut collecter les revenus aujourd'hui
+     */
+    function isReadyToCollect(investment) {
+        const lastCollection = investment.lastCollection || 0;
+        const now = new Date();
+        const lastCollectionDate = new Date(lastCollection);
+        
+        return lastCollectionDate.getDate() !== now.getDate() ||
+            lastCollectionDate.getMonth() !== now.getMonth() ||
+            lastCollectionDate.getFullYear() !== now.getFullYear();
+    }
+
+    /**
+     * Met à jour les statistiques affichées
+     */
+    function updateStats(investments) {
+        const totalVips = investments.filter(inv => inv.status === 'active').length;
+        const totalRevenue = investments.reduce((sum, inv) => 
+            sum + (inv.status === 'active' ? (inv.totalCollected || 0) : 0), 0);
+        
+        const totalVipsElement = document.getElementById('total-vips');
+        const totalRevenueElement = document.getElementById('total-revenue');
+        
+        if (totalVipsElement) {
+            totalVipsElement.textContent = totalVips;
+        }
+        if (totalRevenueElement) {
+            totalRevenueElement.textContent = totalRevenue.toLocaleString('fr-FR') + ' FCFA';
+        }
+    }
+
+    /**
+     * Charge et affiche les VIPs de l'utilisateur
+     */
+    async function loadVIPs() {
+        if (!currentUser) return;
+        
+        try {
+            const snapshot = await get(ref(db, `investments/${currentUser.uid}`));
+            const container = document.getElementById('vips-container');
+            
+            if (!container) {
+                console.error("Élément 'vips-container' non trouvé");
+                return;
+            }
+            
+            if (!snapshot.exists()) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 20px; background: rgba(30,41,59,0.8); border-radius: 16px;">
+                        <h2>Aucun VIP actif</h2>
+                        <p>Investissez dans un VIP pour commencer à gagner des revenus.</p>
+                    </div>
+                `;
+                updateStats([]);
+                return;
+            }
+
+            const investments = [];
+            snapshot.forEach(child => {
+                const investment = { id: child.key, ...child.val() };
+                if (investment.status === 'active') {
+                    investments.push(investment);
+                }
+            });
+
+            updateStats(investments);
+            renderVIPs(investments);
+        } catch (error) {
+            console.error("Erreur lors du chargement des VIP:", error);
+            showNotification("Erreur lors du chargement des VIP", "error");
+        }
+    }
+
+    /**
+     * Rend les cartes VIP dans le DOM
+     */
+    function renderVIPs(investments) {
+        const container = document.getElementById('vips-container');
+        if (!container) return;
+        
+        container.innerHTML = investments.map(investment => {
+            const config = VIP_CONFIG[investment.productId];
+            if (!config) return '';
+            
+            const { isComplete, progress, remainingDays } = calculateCycleProgress(investment);
+            const canCollect = !isComplete && isReadyToCollect(investment);
+            const formattedDate = new Date(investment.timestamp).toLocaleDateString('fr-FR');
+            
+            return `
+                <div class="vip-card">
+                    <div class="vip-header">
+                        <div class="vip-logo" style="background-image: url('${config.image}');">VIP</div>
+                        <div>
+                            <div class="vip-title">${config.nom}</div>
+                            <div class="vip-subtitle">${config.dailyRevenue.toLocaleString('fr-FR')} FCFA / jour</div>
+                        </div>
+                    </div>
+                    <div class="vip-details">
+                        <div class="detail-row">
+                            <span><i class="fas fa-calendar"></i> Date d'investissement</span>
+                            <span>${formattedDate}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span><i class="fas fa-clock"></i> Cycle restant</span>
+                            <span>${remainingDays} jours</span>
+                        </div>
+                        <div class="detail-row">
+                            <span><i class="fas fa-wallet"></i> Revenu quotidien</span>
+                            <span>${config.dailyRevenue.toLocaleString('fr-FR')} FCFA</span>
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-header">
+                            <span><i class="fas fa-chart-line"></i> Progression</span>
+                            <span>${progress}%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progress}%"></div>
+                        </div>
+                    </div>
+                    <button class="collect-btn" onclick="window.collectRevenue('${investment.id}')" ${(!canCollect || isComplete) ? 'disabled' : ''}>
+                        <i class="fas fa-wallet"></i> 
+                        ${isComplete ? 'Cycle terminé' : (canCollect ? 'Collecter les revenus' : 'Déjà collecté')}
+                    </button>
+                </div>
+            `;
+        }).join('');
+    }
+
+    /**
+     * Fonction globale pour collecter les revenus
+     */
+    window.collectRevenue = async function(investmentId) {
+        if (!currentUser) {
+            showNotification("Veuillez vous connecter", "error");
+            return;
+        }
+
+        try {
+            const investmentRef = ref(db, `investments/${currentUser.uid}/${investmentId}`);
+            const userRef = ref(db, `users/${currentUser.uid}`);
+            
+            const [investmentSnapshot, userSnapshot] = await Promise.all([
+                get(investmentRef),
+                get(userRef)
+            ]);
+
+            if (!investmentSnapshot.exists() || !userSnapshot.exists()) {
+                throw new Error("Données non trouvées");
+            }
+
+            const investment = investmentSnapshot.val();
+            const user = userSnapshot.val();
+            const config = VIP_CONFIG[investment.productId];
+
+            if (!config) {
+                throw new Error("Configuration du VIP non trouvée");
+            }
+
+            const { isComplete } = calculateCycleProgress(investment);
+            if (isComplete) {
+                throw new Error("Ce VIP a terminé son cycle");
+            }
+            
+            if (!isReadyToCollect(investment)) {
+                throw new Error("Vous avez déjà réclamé aujourd'hui");
+            }
+
+            const newTotal = (investment.totalCollected || 0) + config.dailyRevenue;
+            if (newTotal > config.totalRevenue) {
+                throw new Error("Le cycle de ce VIP est terminé");
+            }
+
+            const updates = {
+                [`users/${currentUser.uid}/balance`]: (user.balance || 0) + config.dailyRevenue,
+                [`investments/${currentUser.uid}/${investmentId}/lastCollection`]: Date.now(),
+                [`investments/${currentUser.uid}/${investmentId}/totalCollected`]: newTotal
+            };
+
+            await update(ref(db), updates);
+            showNotification(`Vous avez collecté ${config.dailyRevenue.toLocaleString('fr-FR')} FCFA !`, "success");
+            loadVIPs();
+        } catch (error) {
+            console.error("Erreur lors de la collecte:", error);
+            showNotification(error.message || "Erreur lors de la collecte des revenus", "error");
+        }
+    };
+
+    // Gestion de l'authentification
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            currentUser = user;
+            loadVIPs();
+            
+            // Écouter les changements en temps réel
+            const investmentsRef = ref(db, `investments/${user.uid}`);
+            onValue(investmentsRef, () => {
+                loadVIPs();
+            });
+        } else {
+            window.location.href = 'login.html';
+        }
+    });
+
+    // Gestion des erreurs globales
+    window.addEventListener('error', (error) => {
+        console.error('Une erreur est survenue:', error);
+        showNotification('Une erreur inattendue est survenue', "error");
+    });
+
+    // Gestion des erreurs de promesses non catchées
+    window.addEventListener('unhandledrejection', (event) => {
+        console.error('Promesse rejetée:', event.reason);
+        showNotification('Une erreur inattendue est survenue', "error");
+        event.preventDefault();
+    });
+</script>
+</body>
+</html>

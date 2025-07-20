@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Compte - Wave Digital Hikers</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #ffffff;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://image.noelshack.com/fichiers/2025/29/7/1752967991-fond-communication-reseau-abstrait-3d-conception-particules-fluides-1048-16923.jpg') no-repeat center center;
+            background-size: cover;
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        /* Header élégant avec effet de verre */
+        .header {
+            background: rgba(20, 30, 48, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 25px 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .back-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #4db8ff;
+            font-size: 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-btn:hover {
+            background: rgba(77, 184, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .header-content {
+            flex-grow: 1;
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        }
+
+        .header p {
+            color: #a0aec0;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        /* Contenu principal */
+        .container {
+            max-width: 500px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Carte de compte élégante */
+        .account-card {
+            background: rgba(20, 30, 48, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .account-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #4db8ff, #764ba2);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            color: #4db8ff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title i {
+            font-size: 1.6rem;
+        }
+
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .card-chip {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 50px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-chip i {
+            font-size: 1.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Détails du compte */
+        .account-details {
+            background: rgba(20, 30, 48, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out 0.2s;
+            animation-fill-mode: both;
+        }
+
+        .account-details::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #764ba2, #4db8ff);
+        }
+
+        .details-title {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            color: #bb86fc;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .details-title i {
+            font-size: 1.6rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: #cbd5e0;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .detail-label i {
+            color: #4db8ff;
+            font-size: 1.1rem;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            text-align: right;
+            max-width: 60%;
+            word-break: break-word;
+        }
+
+        /* Actions */
+        .actions-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 8px;
+        }
+
+        .action-btn:hover {
+            background: rgba(77, 184, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(77, 184, 255, 0.3);
+        }
+
+        .action-btn i {
+            font-size: 1.8rem;
+            color: #4db8ff;
+        }
+
+        .danger {
+            background: rgba(220, 53, 69, 0.1);
+            border-color: rgba(220, 53, 69, 0.2);
+        }
+
+        .danger:hover {
+            background: rgba(220, 53, 69, 0.2);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .danger i {
+            color: #ff6b6b;
+        }
+
+        /* Messages */
+        .message {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.1rem;
+            animation: fadeIn 0.5s ease;
+            background: rgba(20, 30, 48, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .message-success {
+            border-left: 4px solid #00e676;
+        }
+
+        .message-error {
+            border-left: 4px solid #ff1744;
+        }
+
+        .message i {
+            font-size: 1.5rem;
+        }
+
+        .message-success i {
+            color: #00e676;
+        }
+
+        .message-error i {
+            color: #ff1744;
+        }
+
+        /* Barre de navigation identique à la première page */
+        .navigation {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            max-width: 480px;
+            margin: 0 auto;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 0;
+            z-index: 1000;
+            border-top-left-radius: 25px;
+            border-top-right-radius: 25px;
+        }
+
+        .nav-item {
+            flex: 1;
+            padding: 12px 8px;
+            text-align: center;
+            color: #666;
+            font-size: 11px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 15px;
+            margin: 0 4px;
+            background: rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-item.active::before {
+            opacity: 1;
+        }
+
+        .nav-item.active {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+        }
+
+        .nav-item:hover {
+            color: #667eea;
+            transform: translateY(-1px);
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .nav-icon {
+            margin-bottom: 4px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .nav-icon i {
+            font-size: 18px;
+            display: block;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        /* Animations */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Indicateur de chargement */
+        .loading {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: loadingShimmer 1.5s infinite;
+        }
+
+        @keyframes loadingShimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .container {
+                padding: 0 15px;
+            }
+            
+            .account-card, .account-details {
+                padding: 25px;
+            }
+            
+            .actions-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" id="backButton">‹</button>
+        <div class="header-content">
+            <h1>Mon Compte</h1>
+            <p>Gestion de votre compte lié</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="account-card">
+            <div class="card-title">
+                <i class="fas fa-credit-card"></i>
+                Compte Lié
+            </div>
+            
+            <div class="card-content">
+                <div class="card-chip">
+                    <i class="fas fa-microchip"></i>
+                </div>
+                
+                <div class="operator-display">
+                    <div id="operatorDisplay" class="loading" style="font-size: 1.8rem; font-weight: 600; margin-bottom: 15px; height: 30px; width: 70%;">
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-family: 'Courier New', monospace; letter-spacing: 3px; font-size: 1.1rem;">
+                        <span>••••</span>
+                        <span>••••</span>
+                        <span>••••</span>
+                        <span>••••</span>
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; margin-top: 20px; color: rgba(255, 255, 255, 0.8);">
+                    <div>
+                        <div style="font-size: 0.8rem; margin-bottom: 5px;">Type de compte</div>
+                        <div style="font-weight: 500;">Carte Bancaire</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; margin-bottom: 5px;">Lié le</div>
+                        <div id="linkDate" class="loading" style="font-weight: 500; height: 20px; width: 100px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="account-details">
+            <div class="details-title">
+                <i class="fas fa-info-circle"></i>
+                Détails du Compte
+            </div>
+            
+            <div class="detail-row">
+                <div class="detail-label">
+                    <i class="fas fa-sim-card"></i>
+                    <span>OPÉRATEUR</span>
+                </div>
+                <div id="operatorInfo" class="detail-value loading" style="height: 20px; width: 120px;"></div>
+            </div>
+            
+            <div class="detail-row">
+                <div class="detail-label">
+                    <i class="fas fa-phone"></i>
+                    <span>NUMÉRO DE COMPTE</span>
+                </div>
+                <div id="phoneInfo" class="detail-value loading" style="height: 20px; width: 180px;"></div>
+            </div>
+            
+            <div class="detail-row">
+                <div class="detail-label">
+                    <i class="fas fa-user"></i>
+                    <span>PROPRIÉTAIRE</span>
+                </div>
+                <div id="ownerInfo" class="detail-value loading" style="height: 20px; width: 150px;"></div>
+            </div>
+            
+           
+                    
+                
+            
+            
+            </div>
+        </div>
+
+        <div id="message" class="message" style="display: none;"></div>
+    </div>
+
+    <!-- Barre de navigation identique à la première page -->
+ 
+    </div>
+
+    <!-- Intégration des modules Firebase -->
+  <script type="module">
+  // Import des modules Firebase nécessaires
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+  import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+  // Nouvelle configuration Firebase (ROX ÉNERGIE)
+  const firebaseConfig = {
+    apiKey: "AIzaSyB3pmvbQlu7LPLoE15mLI6fqRbOq2vSe3w",
+    authDomain: "rox-deff1.firebaseapp.com",
+    databaseURL: "https://rox-deff1-default-rtdb.firebaseio.com",
+    projectId: "rox-deff1",
+    storageBucket: "rox-deff1.firebasestorage.app",
+    messagingSenderId: "42974600657",
+    appId: "1:42974600657:web:816ebe30f5a7e4ac1094f0"
+  };
+
+  // Initialisation de Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth();
+  const db = getDatabase();
+
+  // Formatage du numéro de téléphone
+  const formatPhoneNumber = phone => {
+    if (!phone) return "";
+    return phone.replace(/(\d{2})(?=\d)/g, "$1 ");
+  };
+
+  // Formatage de la date
+  const formatDate = timestamp => {
+    if (!timestamp) return "";
+    const date = new Date(timestamp);
+    return date.toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+
+  // Affichage d'un message temporaire
+  const showMessage = (text, type) => {
+    const messageDiv = document.getElementById('message');
+    messageDiv.className = `message message-${type}`;
+    messageDiv.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${text}`;
+    messageDiv.style.display = 'flex';
+    setTimeout(() => {
+      messageDiv.style.display = 'none';
+    }, 5000);
+  };
+
+  // Afficher les infos du compte lié
+  const displayAccountInfo = async (user) => {
+    try {
+      const snapshot = await get(ref(db, `users/${user.uid}/withdrawalConfig`));
+      const data = snapshot.val();
+
+      if (data) {
+        document.getElementById('operatorDisplay').textContent = data.operator;
+        document.getElementById('operatorInfo').textContent = data.operator;
+        document.getElementById('phoneInfo').textContent = formatPhoneNumber(data.phone);
+        document.getElementById('ownerInfo').textContent = data.ownerName || "Non spécifié";
+        document.getElementById('linkDate').textContent = formatDate(data.configuredAt);
+
+        document.querySelectorAll('.loading').forEach(el => {
+          el.classList.remove('loading');
+          el.style.height = 'auto';
+          el.style.width = 'auto';
+        });
+      } else {
+        showMessage('Aucun compte lié trouvé', 'error');
+      }
+    } catch (error) {
+      showMessage(`Erreur de chargement: ${error.message}`, 'error');
+      console.error('Erreur lors du chargement des données:', error);
+    }
+  };
+
+  // Bouton retour
+  document.getElementById('backButton').addEventListener('click', () => {
+    window.history.back();
+  });
+
+  // Vérification de l'authentification
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      displayAccountInfo(user);
+    } else {
+      showMessage('Redirection vers la page de connexion...', 'error');
+      setTimeout(() => {
+        window.location.href = 'retrait.html';
+      }, 2000);
+    }
+  });
+</script>
+</body>
+</html>

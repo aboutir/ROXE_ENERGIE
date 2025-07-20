@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centre Personnel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reset et base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('https://image.noelshack.com/fichiers/2025/29/7/1752967991-fond-communication-reseau-abstrait-3d-conception-particules-fluides-1048-16923.jpg') no-repeat center center fixed;
+            background-size: cover;
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+            min-height: 100vh;
+            padding-bottom: 80px;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Animation flottante pour les éléments */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* En-tête avec design moderne */
+        .header-gradient {
+            background: 
+                linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%),
+                url('https://image.noelshack.com/fichiers/2025/29/7/1752967991-fond-communication-reseau-abstrait-3d-conception-particules-fluides-1048-16923.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 25px 20px;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(255,255,255,0.05) 100%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+
+        .profile-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo-container {
+            width: 60px;
+            height: 60px;
+            background: 
+                linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 100%),
+                url('https://image.noelshack.com/fichiers/2025/29/7/1752967991-fond-communication-reseau-abstrait-3d-conception-particules-fluides-1048-16923.jpg');
+            background-size: cover;
+            background-position: center;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            overflow: hidden;
+            border: 3px solid rgba(255,255,255,0.3);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(1.1) contrast(1.1);
+        }
+
+        .user-info {
+            flex-grow: 1;
+        }
+
+        .user-id {
+            font-size: 16px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .user-additional-id {
+            font-size: 14px;
+            opacity: 0.9;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        /* VIP Progress Section moderne */
+        .vip-progress-container {
+            background: rgba(255,255,255,0.2);
+            height: 12px;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 20px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 2;
+        }
+
+        .vip-progress-bar {
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            background-size: 400% 100%;
+            height: 100%;
+            width: 45%;
+            border-radius: 20px;
+            animation: gradientShift 3s ease-in-out infinite;
+            box-shadow: 0 2px 8px rgba(255,255,255,0.3);
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .vip-progress-text {
+            text-align: center;
+            color: white;
+            margin-top: 15px;
+            font-size: 14px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Sections avec glassmorphism moderne */
+        .bank-section, .quick-action-section-wrapper {
+            background: 
+                linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%),
+                url('https://image.noelshack.com/fichiers/2025/29/7/1752967991-fond-communication-reseau-abstrait-3d-conception-particules-fluides-1048-16923.jpg');
+            background-size: cover;
+            background-position: center;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.2);
+            margin: 20px;
+            border-radius: 25px;
+            box-shadow: 
+                0 8px 32px rgba(0,0,0,0.2),
+                inset 0 1px 0 rgba(255,255,255,0.2);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .bank-section:hover, .quick-action-section-wrapper:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 12px 40px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+
+        .bank-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            position: relative;
+            z-index: 2;
+        }
+
+        .bank-header-text {
+            color: #ffffff;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .link-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .link-button:hover::before {
+            left: 100%;
+        }
+
+        .link-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102,126,234,0.6);
+        }
+
+        .bank-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .bank-grid-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            margin: 5px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .bank-grid-item:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.05);
+        }
+
+        .bank-grid-value {
+            color: #4db8ff;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .bank-grid-label {
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+
+        /* Éléments d'action avec arrière-plans d'images */
+        .recharge-section, 
+        .quick-action-item-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+            background: 
+                linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%),
+                url('https://image.noelshack.com/fichiers/2025/29/7/1752967991-fond-communication-reseau-abstrait-3d-conception-particules-fluides-1048-16923.jpg');
+            background-size: cover;
+            background-position: center;
+            margin: 2px 0;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .recharge-section:hover,
+        .quick-action-item-wrapper:hover {
+            background: 
+                linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%),
+                url('https://image.noelshack.com/fichiers/2025/29/7/1752967991-fond-communication-reseau-abstrait-3d-conception-particules-fluides-1048-16923.jpg');
+            background-size: cover;
+            background-position: center;
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .recharge-text, 
+        .quick-action-content {
+            display: flex;
+            align-items: center;
+            color: #ffffff;
+            font-weight: 500;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .quick-action-content svg {
+            margin-right: 12px;
+            stroke: #4db8ff;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        /* Style spécial pour la déconnexion */
+        .deconnexion-item {
+            background: 
+                linear-gradient(135deg, rgba(255,77,77,0.2) 0%, rgba(255,77,77,0.1) 100%),
+                url('https://image.noelshack.com/fichiers/2025/29/7/1752967991-fond-communication-reseau-abstrait-3d-conception-particules-fluides-1048-16923.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .deconnexion-item .quick-action-content {
+            color: #ff6b6b !important;
+        }
+
+        .deconnexion-item .quick-action-content svg {
+            stroke: #ff6b6b;
+        }
+
+        /* Navigation moderne */
+        .navigation {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            max-width: 480px;
+            margin: 0 auto;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            flex: 1;
+            padding: 12px 8px;
+            text-align: center;
+            color: #666;
+            font-size: 11px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 15px;
+            margin: 0 4px;
+            background: rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-item.active::before {
+            opacity: 1;
+        }
+
+        .nav-item.active {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+        }
+
+        .nav-item:hover {
+            color: #667eea;
+            transform: translateY(-1px);
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .nav-icon {
+            margin-bottom: 4px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .nav-icon i {
+            font-size: 18px;
+            display: block;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        /* Effets de survol améliorés */
+        .bank-section::before, 
+        .quick-action-section-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.05) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .bank-section:hover::before,
+        .quick-action-section-wrapper:hover::before {
+            transform: translateX(100%);
+        }
+
+        /* Responsive amélioré */
+        @media (max-width: 480px) {
+            .header-gradient {
+                padding: 20px 15px;
+            }
+            
+            .bank-section, .quick-action-section-wrapper {
+                margin: 15px;
+            }
+            
+            .nav-item {
+                font-size: 10px;
+                padding: 10px 6px;
+            }
+            
+            .nav-icon i {
+                font-size: 16px;
+            }
+        }
+
+        /* Animation d'entrée */
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .bank-section, .quick-action-section-wrapper {
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .bank-section {
+            animation-delay: 0.2s;
+        }
+
+        .quick-action-section-wrapper {
+            animation-delay: 0.4s;
+        }
+    </style>
+</head>
+<body>
+    <div id="centre-personnel-app">
+        <!-- Header avec design moderne -->
+        <div class="header-gradient">
+            <div class="profile-section">
+                <div class="logo-container">
+                    <img src="https://image.noelshack.com/fichiers/2025/29/7/1753007715-images-2.jpeg" alt="Profile Logo">
+                </div>
+                <div class="user-info">
+                    <div id="user-id" class="user-id">ROX ÉNERGIE</div>
+                    <div id="user-additional-id" class="user-additional-id">ID:</div>
+                </div>
+                <a href="#profil-parametres">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
+                        <path d="m9 18 6-6-6-6"/>
+                    </svg>
+                </a>
+            </div>
+            
+           
+        </div>
+
+        <!-- Section bancaire moderne -->
+        <div id="bank-section" class="bank-section">
+            <div class="bank-header">
+               <div class="bank-header-text">Tableau de bord personnel</div>
+               
+            </div> 
+            
+            <div class="bank-grid">
+                <div class="bank-grid-item">
+                    <div id="total-withdrawals" class="bank-grid-value">FCFA 0</div>
+                    <div class="bank-grid-label">Total de retrait</div>
+                </div>
+                <div class="bank-grid-item">
+                    <div id="total-recharge" class="bank-grid-value">FCFA 0</div>
+                    <div class="bank-grid-label">Total recharge</div>
+                </div>
+            </div> 
+
+            <div class="bank-grid">
+                <div class="bank-grid-item">
+                    <div id="main-balance" class="bank-grid-value">FCFA 0</div>
+                    <div class="bank-grid-label">Solde principal</div>
+                </div>
+                <div class="bank-grid-item">
+                    <div id="total-revenue" class="bank-grid-value">FCFA 0</div>
+                    <div class="bank-grid-label">Revenu total</div>
+                </div>
+            </div>
+
+            <a href="recharge.html" class="recharge-section">
+                <div class="recharge-text">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 12px;">
+                        <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                        <line x1="12" x2="12" y1="8" y2="16"/>
+                        <line x1="8" x2="16" y1="12" y2="12"/>
+                    </svg>
+                    dépôt 
+                </div>
+                
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6"/>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Section des actions rapides -->
+        <div id="quick-actions" class="quick-action-section-wrapper">
+            <a href="retrait.html" class="quick-action-item-wrapper">
+                <div class="quick-action-content">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Retrait 
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6"/>
+                </svg>
+            </a>
+
+            <a href="portefeuille.html" class="quick-action-item-wrapper">
+                <div class="quick-action-content">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="12" y1="8" x2="12" y2="16"></line>
+                        <line x1="8" y1="12" x2="16" y2="12"></line>
+                    </svg>
+                    Lier un compte de retrait 
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6"/>
+                </svg>
+            </a>
+            
+            <a href="historique-retrait.html" class="quick-action-item-wrapper">
+                <div class="quick-action-content">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="12" y1="8" x2="12" y2="16"></line>
+                        <line x1="8" y1="12" x2="16" y2="12"></line>
+                    </svg>
+                    Historique de retrait 
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6"/>
+                </svg>
+            </a>
+            
+           <a href="historique.html" class="quick-action-item-wrapper">
+                <div class="quick-action-content">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="12" y1="8" x2="12" y2="16"></line>
+                        <line x1="8" y1="12" x2="16" y2="12"></line>
+                    </svg>
+                    Historique de dépôt 
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6"/>
+                </svg>
+            </a> 
+
+            <a href="carte.html" class="quick-action-item-wrapper">
+                <div class="quick-action-content">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                        <line x1="1" y1="10" x2="23" y2="10"></line>
+                    </svg>
+                    Informations lier 
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6"/>
+                </svg>
+            </a>
+
+            <a href="service.html" class="quick-action-item-wrapper">
+                <div class="quick-action-content">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    Avez vous besoin d'aide ? 
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6"/>
+                </svg>
+            </a>
+
+           
+
+            <a href="equipe.html" class="quick-action-item-wrapper">
+                <div class="quick-action-content">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                        <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                    </svg>
+                    Invité
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6"/>
+                </svg>
+            </a>
+
+            <a href="info.html" class="quick-action-item-wrapper">
+                <div class="quick-action-content">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    Centre d'infos
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6"/>
+                </svg>
+            </a>
+
+            <a href="index.html" class="quick-action-item-wrapper deconnexion-item">
+                <div class="quick-action-content">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    Déconnexion
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m9 18 6-6-6-6"/>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Navigation moderne avec icônes Font Awesome -->
+        <div class="navigation">
+            <a href="accueil.html" class="nav-item active">
+                <div class="nav-icon"><i class="fas fa-home"></i></div>
+                <div>Accueil</div>
+            </a>
+            <a href="machine.html" class="nav-item">
+                <div class="nav-icon"><i class="fas fa-ship"></i></div>
+                <div>Mes produits</div>
+            </a>
+            <a href="investir.html" class="nav-item">
+                <div class="nav-icon"><i class="fas fa-coins"></i></div>
+                <div>Achats </div>
+            </a>
+            <a href="solde.html" class="nav-item">
+                <div class="nav-icon"><i class="fas fa-user"></i></div>
+                <div>Compte</div>
+            </a>
+        </div>
+    </div>
+    
+   <script type="module">
+// ========================================
+// IMPORTS FIREBASE
+// ========================================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { 
+  getDatabase, 
+  ref, 
+  get, 
+  set, 
+  update, 
+  push, 
+  onValue, 
+  query, 
+  orderByChild, 
+  equalTo 
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+// ========================================
+// CONFIGURATION FIREBASE
+// ========================================
+const firebaseConfig = {
+  apiKey: "AIzaSyB3pmvbQlu7LPLoE15mLI6fqRbOq2vSe3w",
+  authDomain: "rox-deff1.firebaseapp.com",
+  databaseURL: "https://rox-deff1-default-rtdb.firebaseio.com",
+  projectId: "rox-deff1",
+  storageBucket: "rox-deff1.firebasestorage.app",
+  messagingSenderId: "42974600657",
+  appId: "1:42974600657:web:816ebe30f5a7e4ac1094f0"
+};
+
+// Initialisation Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const database = getDatabase(app);
+
+// ========================================
+// FONCTIONS UTILITAIRES
+// ========================================
+
+/**
+ * Formate un montant en devise FCFA
+ * @param {number} amount - Le montant à formater
+ * @returns {string} - Le montant formaté
+ */
+function formatCurrency(amount) {
+  return `FCFA ${Number(amount).toLocaleString('fr-FR', { 
+    minimumFractionDigits: 0, 
+    maximumFractionDigits: 0 
+  })}`;
+}
+
+/**
+ * Affiche un message d'erreur temporaire
+ * @param {string} message - Le message d'erreur à afficher
+ */
+function showErrorMessage(message) {
+  const errorMessageElement = document.getElementById('error-message');
+  if (errorMessageElement) {
+    errorMessageElement.textContent = message;
+    errorMessageElement.style.display = 'block';
+    
+    // Cacher le message d'erreur après 3 secondes
+    setTimeout(() => {
+      errorMessageElement.textContent = '';
+      errorMessageElement.style.display = 'none';
+    }, 3000);
+  }
+}
+
+/**
+ * Affiche un message de succès temporaire
+ * @param {string} message - Le message de succès à afficher
+ */
+function showSuccessMessage(message) {
+  const successMessageElement = document.getElementById('success-message');
+  if (successMessageElement) {
+    successMessageElement.textContent = message;
+    successMessageElement.style.display = 'block';
+    
+    // Cacher le message de succès après 3 secondes
+    setTimeout(() => {
+      successMessageElement.textContent = '';
+      successMessageElement.style.display = 'none';
+    }, 3000);
+  } else {
+    // Fallback avec alert si l'élément n'existe pas
+    alert(message);
+  }
+}
+
+// ========================================
+// FONCTIONS DE MISE À JOUR DE L'INTERFACE
+// ========================================
+
+/**
+ * Met à jour l'identifiant utilisateur affiché
+ * @param {string} phoneNumber - Le numéro de téléphone de l'utilisateur
+ */
+function updateUserIdentifier(phoneNumber) {
+  const identifierElement = document.getElementById('user-id');
+  const additionalIdElement = document.getElementById('user-additional-id');
+  
+  if (identifierElement && phoneNumber) {
+    const formattedNumber = phoneNumber.replace(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5');
+    const additionalId = `05*******${phoneNumber.slice(-2)}`;
+    
+    identifierElement.textContent = formattedNumber;
+    if (additionalIdElement) {
+      additionalIdElement.textContent = additionalId;
+    }
+  }
+}
+
+/**
+ * Met à jour le solde utilisateur affiché
+ * @param {number} balance - Le nouveau solde
+ */
+function updateUserBalance(balance) {
+  const balanceElements = [
+    'balance-1', 
+    'balance-2', 
+    'balance-3', 
+    'main-balance', 
+    'user-balance'
+  ];
+
+  balanceElements.forEach(elementId => {
+    const balanceElement = document.getElementById(elementId);
+    if (balanceElement) {
+      balanceElement.textContent = formatCurrency(balance || 0);
+    }
+  });
+}
+
+/**
+ * Met à jour le total des retraits affiché
+ * @param {number} totalWithdrawals - Le total des retraits
+ */
+function updateTotalWithdrawals(totalWithdrawals) {
+  const totalWithdrawalsElement = document.getElementById('total-withdrawals');
+  if (totalWithdrawalsElement) {
+    totalWithdrawalsElement.textContent = formatCurrency(totalWithdrawals || 0);
+  }
+}
+
+// ========================================
+// FONCTIONS DE GESTION DES RETRAITS
+// ========================================
+
+/**
+ * Enregistre un retrait pour l'utilisateur
+ * @param {string} userId - L'ID de l'utilisateur
+ * @param {number} amount - Le montant à retirer
+ * @returns {boolean} - Succès ou échec de l'opération
+ */
+async function recordWithdrawal(userId, amount) {
+  try {
+    // Référence à l'utilisateur
+    const userRef = ref(database, `users/${userId}`);
+    
+    // Récupérer les données actuelles de l'utilisateur
+    const userSnapshot = await get(userRef);
+    const userData = userSnapshot.val();
+    
+    // Vérifier si l'utilisateur existe et si le solde est suffisant
+    if (!userData) {
+      showErrorMessage("Utilisateur non trouvé");
+      return false;
+    }
+    
+    if (userData.balance < amount) {
+      showErrorMessage("Solde insuffisant pour effectuer le retrait");
+      return false;
+    }
+    
+    // Calculer le nouveau solde
+    const newBalance = userData.balance - amount;
+    
+    // Générer une référence pour l'historique des retraits
+    const withdrawalHistoryRef = ref(database, `users/${userId}/withdrawalHistory`);
+    const newWithdrawalRef = push(withdrawalHistoryRef);
+    
+    // Données du retrait
+    const withdrawalData = {
+      amount: amount,
+      timestamp: Date.now(),
+      status: 'success',
+      date: new Date().toISOString()
+    };
+    
+    // Mise à jour simultanée du solde et de l'historique
+    await Promise.all([
+      update(userRef, { balance: newBalance }),
+      set(newWithdrawalRef, withdrawalData)
+    ]);
+    
+    // Mettre à jour l'affichage
+    updateUserBalance(newBalance);
+    calculateAndDisplayTotalWithdrawals(userId);
+    
+    return true;
+    
+  } catch (error) {
+    console.error("Erreur lors du retrait:", error);
+    showErrorMessage("Une erreur est survenue lors du retrait");
+    return false;
+  }
+}
+
+// ========================================
+// FONCTIONS DE CALCUL ET D'AFFICHAGE
+// ========================================
+
+/**
+ * Calcule et affiche le total des revenus
+ * @param {string} userId - L'ID de l'utilisateur
+ * @returns {Promise<number>} - Le total des revenus
+ */
+function calculateTotalRevenues(userId) {
+  return new Promise((resolve, reject) => {
+    const investmentsRef = ref(database, `investments/${userId}`);
+    
+    onValue(investmentsRef, (snapshot) => {
+      try {
+        const investments = snapshot.val();
+        let totalRevenue = 0;
+        
+        if (investments) {
+          // Calculer le total des revenus à partir des investissements actifs
+          totalRevenue = Object.values(investments)
+            .filter(investment => investment.status === 'active')
+            .reduce((total, investment) => {
+              return total + (investment.totalCollected || 0);
+            }, 0);
+        }
+
+        // Mettre à jour l'élément d'affichage du total des revenus
+        const totalRevenueElement = document.getElementById('total-revenue');
+        if (totalRevenueElement) {
+          totalRevenueElement.textContent = formatCurrency(totalRevenue);
+        }
+
+        resolve(totalRevenue);
+        
+      } catch (error) {
+        console.error("Erreur lors du traitement des revenus:", error);
+        reject(error);
+      }
+    }, (error) => {
+      console.error("Erreur lors de la récupération des revenus:", error);
+      
+      // Réinitialiser à zéro en cas d'erreur
+      const totalRevenueElement = document.getElementById('total-revenue');
+      if (totalRevenueElement) {
+        totalRevenueElement.textContent = formatCurrency(0);
+      }
+      
+      reject(error);
+    });
+  });
+}
+
+/**
+ * Calcule et affiche le total des recharges
+ * @param {string} userId - L'ID de l'utilisateur
+ * @returns {Promise<Object>} - Objet contenant totalRecharges et rechargeCount
+ */
+function calculateTotalRecharges(userId) {
+  return new Promise((resolve, reject) => {
+    const rechargesRef = ref(database, 'transactions');
+    
+    // Requête pour filtrer les transactions de recharge de l'utilisateur
+    const userRechargesQuery = query(
+      rechargesRef, 
+      orderByChild('userId'), 
+      equalTo(userId)
+    );
+    
+    onValue(userRechargesQuery, (snapshot) => {
+      try {
+        const transactions = snapshot.val();
+        let totalRecharges = 0;
+        let rechargeCount = 0;
+        
+        if (transactions) {
+          const successfulTransactions = Object.values(transactions)
+            .filter(transaction => transaction.status === 'success');
+          
+          // Calculer le total des recharges réussies
+          totalRecharges = successfulTransactions.reduce((total, transaction) => {
+            return total + (parseFloat(transaction.amount) || 0);
+          }, 0);
+
+          // Compter les recharges réussies
+          rechargeCount = successfulTransactions.length;
+        }
+
+        // Mettre à jour l'élément d'affichage du total des recharges
+        const totalRechargesElement = document.getElementById('total-recharge');
+        if (totalRechargesElement) {
+          totalRechargesElement.textContent = formatCurrency(totalRecharges);
+        }
+
+        // Mettre à jour le nombre de recharges
+        const rechargeCountElement = document.getElementById('recharge-count');
+        if (rechargeCountElement) {
+          rechargeCountElement.textContent = rechargeCount.toString();
+        }
+
+        resolve({ totalRecharges, rechargeCount });
+        
+      } catch (error) {
+        console.error("Erreur lors du traitement des recharges:", error);
+        reject(error);
+      }
+    }, (error) => {
+      console.error("Erreur lors de la récupération des recharges:", error);
+      reject(error);
+    });
+  });
+}
+
+/**
+ * Calcule et affiche le total des retraits
+ * @param {string} userId - L'ID de l'utilisateur
+ */
+function calculateAndDisplayTotalWithdrawals(userId) {
+  const withdrawalHistoryRef = ref(database, `users/${userId}/withdrawalHistory`);
+  
+  onValue(withdrawalHistoryRef, (snapshot) => {
+    try {
+      const history = snapshot.val();
+      let totalWithdrawalsAmount = 0;
+      let withdrawalCount = 0;
+      
+      if (history) {
+        // Calculer le total des montants de retraits
+        totalWithdrawalsAmount = Object.values(history).reduce((total, withdrawal) => {
+          return total + (withdrawal.amount || 0);
+        }, 0);
+        
+        withdrawalCount = Object.keys(history).length;
+      }
+
+      // Mettre à jour l'affichage du total des retraits
+      updateTotalWithdrawals(totalWithdrawalsAmount);
+
+      // Mettre à jour le nombre de retraits
+      const withdrawalCountElement = document.getElementById('withdrawal-count');
+      if (withdrawalCountElement) {
+        withdrawalCountElement.textContent = withdrawalCount.toString();
+      }
+      
+    } catch (error) {
+      console.error("Erreur lors du traitement des retraits:", error);
+    }
+  });
+}
+
+// ========================================
+// FONCTION DE RÉINITIALISATION DE L'INTERFACE
+// ========================================
+
+/**
+ * Réinitialise tous les éléments de l'interface
+ */
+function resetUserInterface() {
+  updateUserIdentifier("Non connecté");
+  updateUserBalance(0);
+  updateTotalWithdrawals(0);
+  
+  const elementsToReset = [
+    { id: 'withdrawal-count', value: '0' },
+    { id: 'total-recharge', value: formatCurrency(0) },
+    { id: 'recharge-count', value: '0' },
+    { id: 'total-revenue', value: formatCurrency(0) }
+  ];
+  
+  elementsToReset.forEach(({ id, value }) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.textContent = value;
+    }
+  });
+}
+
+// ========================================
+// CONFIGURATION DES ÉCOUTEURS D'ÉVÉNEMENTS
+// ========================================
+
+/**
+ * Configure les écouteurs d'événements pour les interactions utilisateur
+ * @param {string} userId - L'ID de l'utilisateur
+ */
+function setupEventListeners(userId) {
+  const withdrawalButton = document.getElementById('withdrawal-button');
+  if (withdrawalButton) {
+    // Supprimer les écouteurs existants pour éviter les doublons
+    withdrawalButton.replaceWith(withdrawalButton.cloneNode(true));
+    const newWithdrawalButton = document.getElementById('withdrawal-button');
+    
+    newWithdrawalButton.addEventListener('click', async () => {
+      const withdrawalAmountInput = document.getElementById('withdrawal-amount');
+      if (!withdrawalAmountInput) {
+        showErrorMessage("Champ de montant non trouvé");
+        return;
+      }
+      
+      const amount = parseFloat(withdrawalAmountInput.value);
+      
+      if (isNaN(amount) || amount <= 0) {
+        showErrorMessage("Veuillez entrer un montant valide");
+        return;
+      }
+      
+      // Désactiver le bouton pendant le traitement
+      newWithdrawalButton.disabled = true;
+      newWithdrawalButton.textContent = "Traitement...";
+      
+      try {
+        const result = await recordWithdrawal(userId, amount);
+        if (result) {
+          // Réinitialiser le champ de saisie
+          withdrawalAmountInput.value = '';
+          showSuccessMessage(`Retrait de ${formatCurrency(amount)} effectué avec succès`);
+        }
+      } finally {
+        // Réactiver le bouton
+        newWithdrawalButton.disabled = false;
+        newWithdrawalButton.textContent = "Retirer";
+      }
+    });
+  }
+}
+
+// ========================================
+// GESTION DE L'AUTHENTIFICATION
+// ========================================
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    try {
+      console.log("Utilisateur connecté:", user.uid);
+      
+      const userRef = ref(database, 'users/' + user.uid);
+      const snapshot = await get(userRef);
+      const userData = snapshot.val();
+
+      if (userData) {
+        // Mettre à jour les informations utilisateur
+        if (userData.phoneNumber) {
+          updateUserIdentifier(userData.phoneNumber);
+        }
+        
+        if (userData.balance !== undefined) {
+          updateUserBalance(userData.balance);
+        }
+
+        // Calculer et afficher toutes les statistiques
+        await Promise.all([
+          calculateAndDisplayTotalWithdrawals(user.uid),
+          calculateTotalRecharges(user.uid).catch(error => {
+            console.warn("Erreur lors du calcul des recharges:", error);
+          }),
+          calculateTotalRevenues(user.uid).catch(error => {
+            console.warn("Erreur lors du calcul des revenus:", error);
+          })
+        ]);
+
+        // Configurer les écouteurs d'événements
+        setupEventListeners(user.uid);
+        
+      } else {
+        console.warn("Données utilisateur non trouvées");
+        resetUserInterface();
+      }
+      
+    } catch (error) {
+      console.error("Erreur lors de la récupération des données:", error);
+      showErrorMessage("Erreur lors du chargement des données utilisateur");
+      resetUserInterface();
+    }
+  } else {
+    console.log("Utilisateur non connecté");
+    resetUserInterface();
+  }
+});
+
+// ========================================
+// GESTION DES ERREURS GLOBALES
+// ========================================
+
+window.addEventListener('error', (event) => {
+  console.error('Erreur JavaScript:', event.error);
+  showErrorMessage("Une erreur inattendue s'est produite");
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('Promise rejetée:', event.reason);
+  showErrorMessage("Une erreur de traitement s'est produite");
+});
+
+console.log("Script Firebase initialisé avec succès");
+</script>
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Générateur de Bonus</title>
+    <style>
+        /* Les styles restent les mêmes que précédemment */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #444;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        .btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            font-weight: bold;
+        }
+        
+        .btn:hover {
+            background: #45a049;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+            text-align: center;
+        }
+        
+        .code-display {
+            margin-top: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #2196F3;
+        }
+        
+        .timer {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .history {
+            margin-top: 30px;
+        }
+
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .expired {
+            color: #999;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎁 Générateur de Codes Bonus</h1>
+        
+        <div class="card">
+            <div class="input-group">
+                <label>Montant du bonus</label>
+                <input type="number" id="amount" placeholder="Entrez le montant">
+            </div>
+            <button class="btn" onclick="generateCode()">Générer un Code Bonus</button>
+            <div id="result" class="result"></div>
+        </div>
+
+        <div class="history" id="history">
+            <h2>Historique des codes</h2>
+        </div>
+    </div>
+
+    <script type="module">
+  // ===================================
+  // 📦 IMPORTS FIREBASE
+  // ===================================
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+  import { 
+    getAuth, 
+    onAuthStateChanged, 
+    createUserWithEmailAndPassword, 
+    signInWithEmailAndPassword 
+  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+  import { 
+    getDatabase, 
+    ref, 
+    get, 
+    set, 
+    push, 
+    onValue 
+  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+  import { getStorage } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
+
+  // ===================================
+  // 🔐 CONFIGURATION FIREBASE
+  // ===================================
+  const firebaseConfig = {
+    apiKey: "AIzaSyB3pmvbQlu7LPLoE15mLI6fqRbOq2vSe3w",
+    authDomain: "rox-deff1.firebaseapp.com",
+    databaseURL: "https://rox-deff1-default-rtdb.firebaseio.com",
+    projectId: "rox-deff1",
+    storageBucket: "rox-deff1.appspot.com",
+    messagingSenderId: "42974600657",
+    appId: "1:42974600657:web:816ebe30f5a7e4ac1094f0"
+  };
+
+  // ===================================
+  // 🚀 INITIALISATION FIREBASE
+  // ===================================
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const auth = getAuth(app);
+  const storage = getStorage(app);
+
+  // ===================================
+  // 📊 RÉFÉRENCES DATABASE
+  // ===================================
+  const bonusCodesRef = ref(db, 'bonusCodes');
+
+  // ===================================
+  // 🛠️ UTILITAIRES
+  // ===================================
+  
+  /**
+   * Génère un code bonus unique
+   * @param {number} amount - Montant du bonus
+   * @returns {string} Code généré
+   */
+  function createBonusCode(amount) {
+    const timestamp = Date.now();
+    const randomPart = Math.random().toString(36).substring(2, 8);
+    return `${randomPart}${timestamp}`.substring(0, 12).toUpperCase();
+  }
+
+  /**
+   * Affiche un message de résultat
+   * @param {string} message - Message à afficher
+   * @param {string} type - Type du message (success, error, warning)
+   */
+  function showResult(message, type = 'info') {
+    const result = document.getElementById('result');
+    if (!result) return;
+    
+    result.innerHTML = message;
+    result.className = `result ${type}`;
+    result.style.display = 'block';
+  }
+
+  /**
+   * Met à jour l'historique des codes
+   * @param {Object} data - Données des codes depuis Firebase
+   */
+  function updateHistory(data) {
+    const historyDiv = document.getElementById('history');
+    if (!historyDiv) return;
+    
+    const currentTime = Date.now();
+    let historyHTML = '<h2>📋 Historique des codes</h2>';
+    
+    if (data && Object.keys(data).length > 0) {
+      Object.values(data)
+        .sort((a, b) => b.createdAt - a.createdAt) // Tri par date décroissante
+        .forEach(codeObj => {
+          const isExpired = currentTime > codeObj.expiresAt;
+          const status = codeObj.used ? '✅ Utilisé' : 
+                        isExpired ? '⏰ Expiré' : 
+                        '🟢 Actif';
+          
+          const statusClass = codeObj.used ? 'used' : 
+                            isExpired ? 'expired' : 
+                            'active';
+          
+          historyHTML += `
+            <div class="history-item ${statusClass}">
+              <div class="code-info">
+                <strong>Code:</strong> ${codeObj.code}<br>
+                <strong>Montant:</strong> ${codeObj.amount}€<br>
+                <strong>Créé le:</strong> ${new Date(codeObj.createdAt).toLocaleString()}
+              </div>
+              <div class="code-status">
+                <span class="status-badge ${statusClass}">${status}</span>
+              </div>
+            </div>
+          `;
+        });
+    } else {
+      historyHTML += '<p class="no-data">Aucun code généré pour le moment.</p>';
+    }
+    
+    historyDiv.innerHTML = historyHTML;
+  }
+
+  // ===================================
+  // 🎯 FONCTIONS PRINCIPALES
+  // ===================================
+  
+  /**
+   * Génère un nouveau code bonus
+   */
+  window.generateCode = async function() {
+    try {
+      const amountInput = document.getElementById('amount');
+      if (!amountInput) {
+        showResult('❌ Élément "amount" introuvable dans le DOM.', 'error');
+        return;
+      }
+
+      const amount = parseFloat(amountInput.value);
+      
+      // Validation du montant
+      if (!amount || amount <= 0) {
+        showResult('⚠️ Veuillez entrer un montant valide supérieur à 0.', 'warning');
+        return;
+      }
+
+      // Génération du code
+      const code = createBonusCode(amount);
+      const timestamp = Date.now();
+      
+      const codeData = {
+        code: code,
+        amount: amount,
+        timestamp: timestamp,
+        used: false,
+        expiresAt: timestamp + (5 * 60 * 1000), // 5 minutes
+        createdAt: timestamp
+      };
+
+      // Sauvegarde dans Firebase
+      const newCodeRef = push(bonusCodesRef);
+      await set(newCodeRef, codeData);
+
+      // Affichage du résultat
+      showResult(`
+        <div class="success-message">
+          <h3>✅ Code bonus généré avec succès !</h3>
+          <div class="code-display">${code}</div>
+          <div class="code-details">
+            <p><strong>Montant:</strong> ${amount}€</p>
+            <p class="timer">⏰ Ce code expirera dans 5 minutes</p>
+          </div>
+        </div>
+      `, 'success');
+
+      // Reset du formulaire
+      amountInput.value = '';
+
+    } catch (error) {
+      console.error('Erreur lors de la génération du code:', error);
+      showResult('❌ Erreur lors de la génération du code. Veuillez réessayer.', 'error');
+    }
+  };
+
+  // ===================================
+  // 🔄 LISTENERS & ÉVÉNEMENTS
+  // ===================================
+  
+  // Écouter les changements dans la base de données
+  onValue(bonusCodesRef, (snapshot) => {
+    const data = snapshot.val();
+    updateHistory(data);
+  }, (error) => {
+    console.error('Erreur lors de la lecture des données:', error);
+    showResult('❌ Erreur de connexion à la base de données.', 'error');
+  });
+
+  // Surveiller l'état d'authentification (si nécessaire)
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      console.log('👤 Utilisateur connecté:', user.uid);
+    } else {
+      console.log('🔒 Aucun utilisateur connecté');
+    }
+  });
+
+  // ===================================
+  // 🚀 INITIALISATION
+  // ===================================
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('🔥 Firebase initialisé avec succès');
+    
+    // Vérifier que les éléments DOM nécessaires existent
+    const requiredElements = ['amount', 'result', 'history'];
+    const missingElements = requiredElements.filter(id => !document.getElementById(id));
+    
+    if (missingElements.length > 0) {
+      console.warn('⚠️ Éléments DOM manquants:', missingElements);
+    }
+  });
+
+</script>
+</body>
+</html>

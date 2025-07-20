@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique des retraits</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+           --primary-color: #4e54c8; 
+            --primary-dark: #363a9e;
+            --primary-light: #6a6fd8;
+            --accent-color: #ff6b6b;
+            --text-color: #ffffff;
+            --text-light: #ffffff;
+           
+           
+            --success-color: #4CAF50;
+            --warning-color: #FF9800;
+            --danger-color: #F44336;
+            --card-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Background avec effet élégant */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://image.noelshack.com/fichiers/2025/29/7/1752967991-fond-communication-reseau-abstrait-3d-conception-particules-fluides-1048-16923.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            filter: blur(2px) brightness(0.8);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-top: 80px;
+            padding-bottom: 100px;
+        }
+
+        .header {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            color: var(--primary-dark);
+        }
+
+        .back-arrow {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-right: 16px;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            transition: background-color var(--transition-speed);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .back-arrow:hover {
+            background-color: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        .header-content {
+            flex-grow: 1;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--primary-dark);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .card {
+            background: var(--card-background);
+            margin: 16px 0;
+            padding: 25px;
+            border-radius: 18px;
+            box-shadow: var(--card-shadow);
+            transform: translateY(0);
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+            animation: fadeIn 0.5s ease-out;
+            border-left: 5px solid var(--primary-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--primary-color);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .row:first-child {
+            padding-top: 0;
+        }
+
+        .left-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .label {
+            color: var(--text-light);
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .value {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .black-text {
+            color: var(--text-color);
+        }
+
+        .blue-text {
+            color: var(--primary-color);
+        }
+
+        .accent-text {
+            color: var(--accent-color);
+        }
+
+        .success-text {
+            color: var(--success-color);
+        }
+
+        .warning-text {
+            color: var(--warning-color);
+        }
+
+        .danger-text {
+            color: var(--danger-color);
+        }
+
+        .no-history {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+            font-size: 16px;
+            background: var(--card-background);
+            margin: 20px;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+        }
+
+        /* Badges et indicateurs */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-primary {
+            background-color: var(--primary-light);
+            color: white;
+        }
+
+        .badge-accent {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .badge-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .badge-warning {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .badge-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        /* Animation d'apparition */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Navigation en bas */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.08);
+            border-radius: 25px 25px 0 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-light);
+            background-color: transparent;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-size: 24px;
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+            background-color: rgba(78, 84, 200, 0.1);
+            transform: translateY(-6px);
+        }
+
+        .nav-label {
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 5px;
+        }
+
+        /* Filtres */
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Statut dans la carte */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-pending {
+            background-color: var(--warning-color);
+        }
+
+        .status-completed {
+            background-color: var(--success-color);
+        }
+
+        .status-failed {
+            background-color: var(--danger-color);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                padding-top: 70px;
+            }
+            
+            .header {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .filters {
+                gap: 8px;
+            }
+            
+            .filter-btn {
+                padding: 8px 15px;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 18px;
+            }
+            
+            .subtitle {
+                font-size: 12px;
+            }
+            
+            .card {
+                padding: 18px;
+                margin: 12px 0;
+            }
+            
+            .row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .value {
+                margin-left: 40px;
+            }
+            
+            .filters {
+                justify-content: flex-start;
+            }
+        }
+
+        /* Effet de vague décoratif */
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            z-index: -1;
+        }
+
+        .wave svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 150px;
+        }
+
+        .wave .shape-fill {
+            fill: rgba(78, 84, 200, 0.1);
+        }
+    </style>
+</head>
+<body>
+    
+
+    <div class="header">
+        <a href="#" class="back-arrow">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-content">
+            <h1>Historique des retraits</h1>
+            <div class="subtitle">Vos transactions financières</div>
+        </div>
+    </div>
+
+    <div class="container">
+       
+        </div>
+        
+        <div id="history-container">
+            <!-- Les cartes d'historique seront injectées ici par JavaScript -->
+        </div>
+    </div>
+
+   <script type="module">
+  // ✅ Import Firebase
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+  import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+  import { getStorage } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
+
+  // 🔐 Configuration Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyB3pmvbQlu7LPLoE15mLI6fqRbOq2vSe3w",
+    authDomain: "rox-deff1.firebaseapp.com",
+    databaseURL: "https://rox-deff1-default-rtdb.firebaseio.com",
+    projectId: "rox-deff1",
+    storageBucket: "rox-deff1.appspot.com",
+    messagingSenderId: "42974600657",
+    appId: "1:42974600657:web:816ebe30f5a7e4ac1094f0"
+  };
+   
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
+
+        function formatAmount(amount) {
+            return `${amount.toLocaleString('fr-FR')} FCFA`;
+        }
+
+        function formatDate(timestamp) {
+            return new Date(timestamp).toLocaleString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function createWithdrawalCard(withdrawal) {
+            return `
+                <div class="card">
+                    <div class="row">
+                        <div class="left-section">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMSA1bC0xMCA5LTEwLTkiLz48cGF0aCBkPSJNMjEgMTlsLTEwLTktMTAgOSIvPjwvc3ZnPg==" alt="Retirer" class="icon">
+                            <span class="label black-text">Montant demandé</span>
+                        </div>
+                        <span class="value black-text">${formatAmount(withdrawal.amount)}</span>
+                    </div>
+
+                    <div class="row">
+                        <div class="left-section">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIi8+PHBvbHlsaW5lIHBvaW50cz0iMTIgNiAxMiAxMiAxNiAxNCIvPjwvc3ZnPg==" alt="Temps" class="icon">
+                            <span class="label">Date de demande</span>
+                        </div>
+                        <span class="value">${formatDate(withdrawal.timestamp)}</span>
+                    </div>
+
+                    <div class="row">
+                        <div class="left-section">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIi8+PGxpbmUgeDE9IjEyIiB5MT0iMTYiIHgyPSIxMiIgeTI9IjEyIi8+PGxpbmUgeDE9IjEyIiB5MT0iOCIgeDI9IjEyIiB5Mj0iOCIvPjwvc3ZnPg==" alt="Statut" class="icon">
+                            <span class="label">Statut</span>
+                        </div>
+                        <span class="value blue-text">${withdrawal.status}</span>
+                    </div>
+
+                    <div class="row">
+                        <div class="left-section">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIi8+PGxpbmUgeDE9IjEyIiB5MT0iOCIgeDI9IjEyIiB5Mj0iMTYiLz48bGluZSB4MT0iOCIgeTE9IjEyIiB4Mj0iMTYiIHkyPSIxMiIvPjwvc3ZnPg==" alt="Montant" class="icon">
+                            <span class="label">Montant net</span>
+                        </div>
+                        <span class="value orange-text">${formatAmount(withdrawal.amount - withdrawal.fees)}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayWithdrawalHistory(history) {
+            const container = document.getElementById('history-container');
+            
+            if (!history || Object.keys(history).length === 0) {
+                container.innerHTML = `
+                    <div class="no-history">
+                        Aucun historique de retrait disponible
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            Object.entries(history)
+                .sort(([, a], [, b]) => b.timestamp - a.timestamp)
+                .forEach(([key, withdrawal]) => {
+                    container.innerHTML += createWithdrawalCard(withdrawal);
+                });
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const historyRef = ref(database, `users/${user.uid}/withdrawalHistory`);
+                onValue(historyRef, (snapshot) => {
+                    const history = snapshot.val();
+                    displayWithdrawalHistory(history);
+                });
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        document.querySelector('.back-arrow').addEventListener('click', (e) => {
+            e.preventDefault();
+            history.back();
+        });
+    </script>    
+ 
+</body>
+</html>

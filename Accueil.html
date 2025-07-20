@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil - Investissements Maritimes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background: url('https://image.noelshack.com/fichiers/2025/29/7/1752967991-fond-communication-reseau-abstrait-3d-conception-particules-fluides-1048-16923.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0 auto;
+            max-width: 480px;
+            color: white;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        /* Carrousel avec effet glassmorphism */
+        .carousel-container {
+            position: relative;
+            width: calc(100% - 30px);
+            height: 220px;
+            overflow: hidden;
+            margin: 20px 15px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .carousel {
+            display: flex;
+            width: 300%;
+            height: 100%;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-slide {
+            width: 33.333%;
+            height: 100%;
+            position: relative;
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.5));
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            color: white;
+        }
+
+        .carousel-overlay h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        }
+
+        .carousel-overlay p {
+            font-size: 14px;
+            opacity: 0.9;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .carousel-dots {
+            position: absolute;
+            bottom: 15px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .dot.active {
+            background-color: white;
+        }
+
+        /* Sections principales avec glassmorphism */
+        .section-header {
+            padding: 15px 20px 5px;
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .card-container {
+            padding: 0 15px 15px;
+        }
+
+        .main-card {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .main-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.2);
+        }
+
+        .main-card-image {
+            height: 130px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .main-card-content {
+            padding: 15px;
+        }
+
+        .main-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        .main-card-desc {
+            font-size: 13px;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 12px;
+        }
+
+        .main-card-price {
+            font-size: 15px;
+            font-weight: 600;
+            color: #4db8ff;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            padding: 0 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            padding: 10px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+            background: rgba(255,255,255,0.2);
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #4db8ff;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Bouton principal */
+        .primary-button {
+            display: block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border-radius: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            margin: 15px;
+            box-shadow: 0 4px 15px rgba(102,126,234,0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: none;
+        }
+
+        .primary-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102,126,234,0.6);
+        }
+
+        /* Nouvelle section pour les codes cadeaux */
+        .gift-card-container {
+            padding: 0 15px 15px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        .gift-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .gift-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .gift-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fad0c4, #a1c4fd);
+            background-size: 400% 400%;
+            animation: gradientBG 10s ease infinite;
+        }
+
+        .gift-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .gift-icon {
+            font-size: 28px;
+            margin-right: 15px;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .gift-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #ffd700, #ffb700);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gift-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .gift-input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .gift-input {
+            width: 100%;
+            padding: 15px 15px 15px 50px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .gift-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .gift-input:focus {
+            outline: none;
+            border-color: #ffd700;
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+        }
+
+        .gift-input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: #ffd700;
+        }
+
+        .gift-button {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(255, 154, 158, 0.4);
+        }
+
+        .gift-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 154, 158, 0.6);
+        }
+
+        .gift-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+            text-align: center;
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .gift-success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            color: #a5d6a7;
+        }
+
+        .gift-error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244, 67, 54, 0.5);
+            color: #ef9a9a;
+        }
+
+        .gift-amount {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 10px 0;
+            color: #ffd700;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+        }
+
+        .gift-balance {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .gift-balance-value {
+            font-weight: 700;
+            color: #ffd700;
+        }
+
+        /* Navigation moderne */
+        .navigation {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            max-width: 480px;
+            margin: 0 auto;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            flex: 1;
+            padding: 12px 8px;
+            text-align: center;
+            color: #666;
+            font-size: 11px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 15px;
+            margin: 0 4px;
+            background: rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-item.active::before {
+            opacity: 1;
+        }
+
+        .nav-item.active {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102,126,234,0.3);
+        }
+
+        .nav-item:hover {
+            color: #667eea;
+            transform: translateY(-1px);
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .nav-icon {
+            margin-bottom: 4px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .nav-icon i {
+            font-size: 18px;
+            display: block;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        } 
+
+        /* Espace pour éviter que le contenu ne soit caché derrière la navigation */
+        .spacer {
+            height: 70px;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .carousel-container, .stats-container, .card-container, .gift-card-container {
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .stats-container {
+            animation-delay: 0.2s;
+        }
+
+        .card-container, .gift-card-container {
+            animation-delay: 0.4s;
+        }
+
+        .gift-card {
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        /* Chargement */
+        .gift-loading {
+            display: none;
+            text-align: center;
+            margin-top: 15px;
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        .gift-loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-left: 10px;
+            border: 3px solid #ffd700;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Carrousel d'images -->
+    <div class="carousel-container">
+        <div class="carousel">
+            <div class="carousel-slide">
+                <img src="https://image.noelshack.com/fichiers/2025/30/1/1753049201-images-3.jpeg" alt="Croisière de luxe">
+                <div class="carousel-overlay">
+                    <h2></h2>
+                    <p></p>
+                </div>
+            </div>
+            <div class="carousel-slide">
+                <img src="https://image.noelshack.com/fichiers/2025/30/1/1753049424-images-4.jpeg" alt="Yacht de luxe">
+                <div class="carousel-overlay">
+                    <h2></h2>
+                    <p></p>
+                </div>
+            </div>
+            <div class="carousel-slide">
+                <img src="https://image.noelshack.com/fichiers/2025/30/1/1753049670-images-7.jpeg" alt="MSC Bugatti">
+                <div class="carousel-overlay">
+                    <h2></h2>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-dots">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <div class="stat-icon">📈</div>
+            <div class="stat-value">10%</div>
+            <div class="stat-label">Rendement moyen</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value">0</div>
+            <div class="stat-label">Investisseurs actifs</div>
+        </div>
+    </div>
+
+    <!-- Nouvelle section pour les codes cadeaux -->
+    <div class="gift-card-container">
+        <div class="gift-card">
+            <div class="gift-header">
+                <div class="gift-icon">🎁</div>
+                <div class="gift-title">Échangez vos codes cadeaux</div>
+            </div>
+            
+            <div class="gift-form">
+                <div class="gift-input-group">
+                    <i class="fas fa-gift gift-input-icon"></i>
+                    <input type="text" id="giftCode" class="gift-input" placeholder="Entrez votre code cadeau" maxlength="16">
+                </div>
+                
+                <button id="giftButton" class="gift-button">
+                    <i class="fas fa-exchange-alt"></i>
+                    Échanger le code
+                </button>
+                
+                <div id="giftLoading" class="gift-loading">Validation en cours...</div>
+                
+                <div id="giftResult" class="gift-result"></div>
+                
+                <div class="gift-balance">
+                    <span>Votre solde:</span>
+                    <span id="giftBalanceValue" class="gift-balance-value">0 FCFA</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Opportunités d'investissement -->
+    <div class="section-header">Voilà les different informations du plans</div>
+    <div class="card-container">
+        <div class="main-card">
+            <div class="main-card-image" style="background-image: url('https://image.noelshack.com/fichiers/2025/30/1/1753049201-images-3.jpeg');"></div>
+            <div class="main-card-content">
+                <div class="main-card-title">Pack Mini ROX</div>
+                <div class="main-card-desc">Rendement de 400 XOF quotidien pendant 20 jours</div>
+                <div class="main-card-price">5 000 FCFA</div>
+            </div>
+        </div>
+        
+        <div class="main-card">
+            <div class="main-card-image" style="background-image: url('https://image.noelshack.com/fichiers/2025/30/1/1753051321-images-4.jpeg');"></div>
+            <div class="main-card-content">
+                <div class="main-card-title">Pack Start ÉNERGIE</div>
+                <div class="main-card-desc">Rendement de 700 FCFA quotidien pendant 25 jours</div>
+                <div class="main-card-price">10 000 XOF</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bouton principal -->
+    <a href="investir.html" class="primary-button">Découvrir tous les investissements</a>
+
+    <!-- Espace pour que le contenu ne soit pas caché par la navigation -->
+    <div class="spacer"></div>
+
+    <!-- Navigation avec icônes Font Awesome -->
+    <div class="navigation">
+        <a href="accueil.html" class="nav-item active">
+            <div class="nav-icon"><i class="fas fa-home"></i></div>
+            <div>Accueil</div>
+        </a>
+        <a href="machine.html" class="nav-item">
+            <div class="nav-icon"><i class="fas fa-ship"></i></div>
+            <div>Mes produits</div>
+        </a>
+        <a href="investir.html" class="nav-item">
+            <div class="nav-icon"><i class="fas fa-coins"></i></div>
+            <div>Achats </div>
+        </a>
+        <a href="solde.html" class="nav-item">
+            <div class="nav-icon"><i class="fas fa-user"></i></div>
+            <div>Compte</div>
+        </a>
+    </div>
+    
+<script type="module">    
+  // ✅ Import Firebase    
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";    
+  import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";    
+  import { getDatabase, ref, get, set, update, remove, push, onValue, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";    
+  import { getStorage } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";    
+    
+  // 🔐 Configuration Firebase    
+  const firebaseConfig = {    
+    apiKey: "AIzaSyB3pmvbQlu7LPLoE15mLI6fqRbOq2vSe3w",    
+    authDomain: "rox-deff1.firebaseapp.com",    
+    databaseURL: "https://rox-deff1-default-rtdb.firebaseio.com",    
+    projectId: "rox-deff1",    
+    storageBucket: "rox-deff1.appspot.com",    
+    messagingSenderId: "42974600657",    
+    appId: "1:42974600657:web:816ebe30f5a7e4ac1094f0"    
+  };    
+      
+  // Initialisation de l'application Firebase    
+  const app = initializeApp(firebaseConfig);    
+  const db = getDatabase(app);    
+  const auth = getAuth(app);
+  
+  // Variables globales
+  let currentTransactionId = null;    
+  let currentUser = null;    
+  let isProcessing = false;    
+    
+  // Fonction pour afficher un toast    
+  function showToast(message, type = 'success') {    
+      const toast = document.getElementById('toast');    
+      if (toast) {
+          toast.textContent = message;    
+          toast.className = `toast toast-${type}`;    
+          toast.style.display = 'block';    
+              
+          setTimeout(() => {    
+              toast.style.display = 'none';    
+          }, 3000);    
+      }
+  }    
+    
+  // Fonction pour supprimer tout l'historique des transactions    
+  window.deleteAllTransactionHistory = async function() {    
+      // Première confirmation    
+      const confirmation = confirm("⚠️ ATTENTION ⚠️\n\nÊtes-vous sûr de vouloir supprimer TOUT l'historique des transactions ?\n\nCette action est IRRÉVERSIBLE et supprimera :\n• Toutes les transactions\n• Tout l'historique des utilisateurs\n\nCliquez sur OK pour continuer ou Annuler pour arrêter.");    
+          
+      if (!confirmation) {    
+          return;    
+      }    
+
+      // Deuxième confirmation avec saisie de texte    
+      const confirmationText = prompt("⚠️ DERNIÈRE CONFIRMATION ⚠️\n\nPour confirmer la suppression COMPLÈTE de tout l'historique, tapez exactement le mot : SUPPRIMER");    
+          
+      if (confirmationText !== "SUPPRIMER") {    
+          showToast("❌ Suppression annulée - confirmation incorrecte", "error");    
+          return;    
+      }    
+
+      try {    
+          showToast("🔄 Suppression en cours... Veuillez patienter", "info");    
+
+          // Supprimer toutes les transactions    
+          const transactionsRef = ref(db, 'transactions');    
+          await remove(transactionsRef);    
+          console.log("✅ Toutes les transactions supprimées");    
+
+          // Supprimer l'historique des transactions de tous les utilisateurs    
+          const usersRef = ref(db, 'users');    
+          const usersSnapshot = await get(usersRef);    
+              
+          if (usersSnapshot.exists()) {    
+              const updates = {};    
+              usersSnapshot.forEach((userSnapshot) => {    
+                  const userId = userSnapshot.key;    
+                  updates[`users/${userId}/transactionHistory`] = null;    
+              });    
+                  
+              if (Object.keys(updates).length > 0) {    
+                  await update(ref(db), updates);    
+                  console.log("✅ Historique des utilisateurs supprimé");    
+              }    
+          }    
+
+          showToast("✅ Tout l'historique des transactions a été supprimé avec succès !", "success");    
+          console.log("🎉 Suppression complète de l'historique terminée");    
+
+          // Rafraîchir l'affichage    
+          setTimeout(() => {    
+              location.reload();    
+          }, 2000);    
+
+      } catch (error) {    
+          console.error('❌ Erreur lors de la suppression de l\'historique:', error);    
+          showToast("❌ Erreur lors de la suppression de l'historique", "error");    
+      }    
+  }    
+    
+  // Fonction pour approuver une transaction et créditer le compte    
+  window.approveTransaction = async function(transactionId) {    
+      try {    
+          // Récupérer les détails de la transaction    
+          const transactionRef = ref(db, `transactions/${transactionId}`);    
+          const transactionSnapshot = await get(transactionRef);    
+          const transaction = transactionSnapshot.val();    
+
+          if (!transaction) {    
+              throw new Error('Transaction non trouvée');    
+          }    
+
+          // Vérifier si userId existe dans la transaction    
+          if (!transaction.userId && transaction.userEmail) {    
+              // Si userId n'existe pas mais que userEmail existe, on récupère l'userId à partir de l'email    
+              const usersRef = ref(db, 'users');    
+              const usersSnapshot = await get(usersRef);    
+              let foundUserId = null;    
+                  
+              usersSnapshot.forEach((userSnapshot) => {    
+                  const userData = userSnapshot.val();    
+                  if (userData.email === transaction.userEmail) {    
+                      foundUserId = userSnapshot.key;    
+                  }    
+              });    
+                  
+              if (foundUserId) {    
+                  transaction.userId = foundUserId;    
+                  // Mettre à jour la transaction avec l'userId trouvé    
+                  await update(ref(db, `transactions/${transactionId}`), {    
+                      userId: foundUserId    
+                  });    
+              } else {    
+                  // Créer un nouvel utilisateur si aucun utilisateur correspondant n'est trouvé    
+                  const newUserRef = push(ref(db, 'users'));    
+                  const newUserId = newUserRef.key;    
+                  await set(newUserRef, {    
+                      email: transaction.userEmail,    
+                      balance: 0,    
+                      createdAt: new Date().toISOString()    
+                  });    
+                  transaction.userId = newUserId;    
+                  // Mettre à jour la transaction avec le nouvel userId    
+                  await update(ref(db, `transactions/${transactionId}`), {    
+                      userId: newUserId    
+                  });    
+              }    
+          }    
+              
+          // Si toujours pas d'userId, on ne peut pas continuer    
+          if (!transaction.userId) {    
+              throw new Error('Impossible d\'identifier l\'utilisateur pour cette transaction');    
+          }    
+
+          // Récupérer ou créer l'utilisateur    
+          const userRef = ref(db, `users/${transaction.userId}`);    
+          let userSnapshot = await get(userRef);    
+          let userData = userSnapshot.val();    
+
+          if (!userData) {    
+              // Créer un nouvel utilisateur si nécessaire    
+              userData = {    
+                  email: transaction.userEmail || 'unknown',    
+                  balance: 0,    
+                  createdAt: new Date().toISOString()    
+              };    
+              await set(userRef, userData);    
+              console.log('Nouvel utilisateur créé:', transaction.userId);    
+          }    
+
+          // Mettre à jour le solde de l'utilisateur    
+          const newBalance = (userData.balance || 0) + Number(transaction.amount);    
+              
+          // Mettre à jour la transaction et le solde de l'utilisateur    
+          const updates = {    
+              [`transactions/${transactionId}/status`]: 'success',    
+              [`transactions/${transactionId}/processedDate`]: new Date().toISOString(),    
+              [`users/${transaction.userId}/balance`]: newBalance    
+          };    
+
+          await update(ref(db), updates);    
+
+          // Créer une entrée dans l'historique des transactions    
+          const historyRef = ref(db, `users/${transaction.userId}/transactionHistory/${transactionId}`);    
+          await set(historyRef, {    
+              type: 'credit',    
+              amount: transaction.amount,    
+              date: new Date().toISOString(),    
+              operator: transaction.operator,    
+              status: 'success',    
+              phone: transaction.phone    
+          });    
+
+          showToast('Transaction approuvée et compte crédité avec succès');    
+      } catch (error) {    
+          console.error('Erreur lors de l\'approbation:', error);    
+          showToast('Erreur lors de l\'approbation de la transaction', 'error');    
+      }    
+  }    
+    
+  // Fonction pour ouvrir le modal de rejet    
+  window.openRejectModal = function(transactionId) {    
+      currentTransactionId = transactionId;    
+      const modal = document.getElementById('rejectModal');
+      if (modal) {
+          modal.style.display = 'flex';    
+      }
+      const reasonInput = document.getElementById('rejectReason');
+      if (reasonInput) {
+          reasonInput.value = '';    
+      }
+  }    
+    
+  // Fonction pour fermer le modal    
+  window.closeModal = function() {    
+      const modal = document.getElementById('rejectModal');
+      if (modal) {
+          modal.style.display = 'none';    
+      }
+  }    
+    
+  // Fonction pour confirmer le rejet de la transaction    
+  window.confirmReject = async function() {    
+      const reasonInput = document.getElementById('rejectReason');
+      const reason = reasonInput ? reasonInput.value : '';
+      
+      if (!reason.trim()) {    
+          alert('Veuillez indiquer un motif de rejet');    
+          return;    
+      }    
+
+      try {    
+          const transactionRef = ref(db, `transactions/${currentTransactionId}`);    
+          await update(ref(db, `transactions/${currentTransactionId}`), {    
+              status: 'failed',    
+              rejectReason: reason,    
+              processedDate: new Date().toISOString()    
+          });    
+
+          // Ajouter l'entrée dans l'historique des transactions    
+          const transactionSnapshot = await get(transactionRef);    
+          const transaction = transactionSnapshot.val();    
+              
+          if (transaction && transaction.userId) {
+              const historyRef = ref(db, `users/${transaction.userId}/transactionHistory/${currentTransactionId}`);    
+              await set(historyRef, {    
+                  type: 'credit_rejected',    
+                  amount: transaction.amount,    
+                  date: new Date().toISOString(),    
+                  operator: transaction.operator,    
+                  status: 'failed',    
+                  reason: reason,    
+                  phone: transaction.phone    
+              });    
+          }
+
+          closeModal();    
+          showToast('Transaction rejetée avec succès');    
+      } catch (error) {    
+          console.error('Erreur lors du rejet:', error);    
+          showToast('Erreur lors du rejet de la transaction', 'error');    
+      }    
+  }    
+    
+  // Fonction pour formater la date    
+  function formatDate(dateString) {    
+      const date = new Date(dateString);    
+      return date.toLocaleDateString('fr-FR', {    
+          day: '2-digit',    
+          month: '2-digit',    
+          year: 'numeric',    
+          hour: '2-digit',    
+          minute: '2-digit'    
+      }).replace(',', ' à');    
+  }    
+    
+  // Fonction pour créer un élément de transaction - CORRIGÉE    
+  function createTransactionItem(transaction) {    
+      const item = document.createElement('div');    
+      item.className = 'transaction-item';    
+          
+      const statusClass = transaction.status === 'pending' ? 'status-pending' :     
+                        transaction.status === 'success' ? 'status-success' : 'status-failed';    
+          
+      const statusText = transaction.status === 'pending' ? 'En attente' :     
+                       transaction.status === 'success' ? 'Approuvé' : 'Rejeté';    
+
+      const actionButtons = transaction.status === 'pending' ? `    
+          <div class="action-buttons">    
+              <button class="btn btn-approve" onclick="approveTransaction('${transaction.id}')">Approuver</button>    
+              <button class="btn btn-reject" onclick="openRejectModal('${transaction.id}')">Rejeter</button>    
+          </div>    
+      ` : '';    
+
+      const rejectReason = transaction.status === 'failed' && transaction.rejectReason ?     
+          `<br><strong>Motif du rejet:</strong> ${transaction.rejectReason}` : '';    
+          
+      const processedInfo = transaction.processedDate ?     
+          `<br><strong>Traité le:</strong> ${formatDate(transaction.processedDate)}` : '';    
+          
+      // CORRECTION: Vérification que transaction.operator existe avant d'appeler toUpperCase()    
+      const operatorDisplay = transaction.operator ? transaction.operator.toUpperCase() : 'N/A';    
+
+      item.innerHTML = `    
+          <div class="transaction-info">    
+              <strong>Montant recharge :</strong> ${transaction.amount} FCFA<br>    
+              <strong>Numéro de recharge :</strong> ${transaction.phone || 'N/A'}    
+          </div>    
+          <div class="transaction-info">    
+              <strong>Opérateur:</strong> ${operatorDisplay}<br>    
+              <strong>Email:</strong> ${transaction.userEmail || 'N/A'}    
+          </div>    
+          <div class="transaction-info">    
+              <strong>Date:</strong> ${formatDate(transaction.date)}    
+              ${processedInfo}    
+              ${rejectReason}    
+          </div>    
+          <div class="status ${statusClass}">    
+              ${statusText}    
+          </div>    
+          ${actionButtons}    
+      `;    
+
+      return item;    
+  }    
+    
+  // Fonction pour afficher les transactions avec filtres optionnels    
+  function displayTransactions(transactions, filters = {}) {    
+      const transactionsList = document.getElementById('transactionsList');    
+      if (!transactionsList) return;
+      
+      let filteredTransactions = [...transactions];    
+
+      if (filters.operator && filters.operator !== "") {    
+          filteredTransactions = filteredTransactions.filter(t =>     
+              t.operator && t.operator.toLowerCase() === filters.operator.toLowerCase());    
+      }    
+      if (filters.status && filters.status !== "") {    
+          filteredTransactions = filteredTransactions.filter(t => t.status === filters.status);    
+      }    
+      if (filters.date && filters.date !== "") {    
+          const filterDate = new Date(filters.date).setHours(0,0,0,0);    
+          filteredTransactions = filteredTransactions.filter(t => {    
+              const transactionDate = new Date(t.date).setHours(0,0,0,0);    
+              return transactionDate === filterDate;    
+          });    
+      }    
+
+      transactionsList.innerHTML = '';    
+
+      if (filteredTransactions.length === 0) {    
+          transactionsList.innerHTML = '<div class="transaction-item">Aucune transaction trouvée</div>';    
+          return;    
+      }    
+
+      // Trier les transactions: en attente d'abord, puis par date décroissante    
+      filteredTransactions.sort((a, b) => {    
+          if (a.status === 'pending' && b.status !== 'pending') return -1;    
+          if (a.status !== 'pending' && b.status === 'pending') return 1;    
+          return new Date(b.date) - new Date(a.date);    
+      });    
+
+      filteredTransactions.forEach(transaction => {    
+          const transactionItem = createTransactionItem(transaction);    
+          transactionsList.appendChild(transactionItem);    
+      });    
+  }    
+    
+  // Fonction pour mettre à jour les statistiques    
+  function updateStats(transactions) {    
+      // Compter les transactions en attente    
+      const pendingCount = transactions.filter(t => t.status === 'pending').length;    
+
+      // Compter les transactions d'aujourd'hui    
+      const today = new Date().setHours(0,0,0,0);    
+      const todayCount = transactions.filter(t => {    
+          const transactionDate = new Date(t.date).setHours(0,0,0,0);    
+          return transactionDate === today;    
+      }).length;    
+
+      // Calculer le montant total des transactions approuvées    
+      const totalAmount = transactions    
+          .filter(t => t.status === 'success')    
+          .reduce((sum, t) => sum + Number(t.amount || 0), 0);    
+
+      // Mettre à jour l'affichage des statistiques    
+      const pendingElement = document.getElementById('pendingCount');
+      const todayElement = document.getElementById('todayCount');
+      const totalElement = document.getElementById('totalAmount');
+      
+      if (pendingElement) pendingElement.textContent = pendingCount;    
+      if (todayElement) todayElement.textContent = todayCount;    
+      if (totalElement) totalElement.textContent = `${totalAmount.toLocaleString()} FCFA`;    
+  }    
+    
+  // Fonction pour appliquer les filtres    
+  window.applyFilters = function() {    
+      const operatorFilter = document.getElementById('operatorFilter');
+      const statusFilter = document.getElementById('statusFilter');
+      const dateFilter = document.getElementById('dateFilter');
+      
+      const operator = operatorFilter ? operatorFilter.value : '';    
+      const status = statusFilter ? statusFilter.value : '';    
+      const date = dateFilter ? dateFilter.value : '';    
+
+      const transactionsRef = ref(db, 'transactions');    
+      get(transactionsRef).then((snapshot) => {    
+          const transactions = [];    
+          snapshot.forEach((childSnapshot) => {    
+              transactions.push({    
+                  id: childSnapshot.key,    
+                  ...childSnapshot.val()    
+              });    
+          });    
+              
+          displayTransactions(transactions, {    
+              operator: operator,    
+              status: status,    
+              date: date    
+          });    
+      });    
+  }    
+    
+  // Fonction pour écouter les changements en temps réel des transactions    
+  function listenToTransactions() {    
+      const transactionsRef = ref(db, 'transactions');    
+      onValue(transactionsRef, (snapshot) => {    
+          const transactions = [];    
+          snapshot.forEach((childSnapshot) => {    
+              transactions.push({    
+                  id: childSnapshot.key,    
+                  ...childSnapshot.val()    
+              });    
+          });    
+          displayTransactions(transactions);    
+          updateStats(transactions);    
+      });    
+  }    
+    
+  // Utilitaires pour les codes bonus    
+  const formatFCFA = (amount) => `${amount.toLocaleString('fr-FR')} FCFA`;    
+
+  const showResult = (message, type) => {    
+      const giftLoading = document.getElementById('giftLoading');
+      const giftResult = document.getElementById('giftResult');
+      
+      if (giftLoading) giftLoading.style.display = 'none';    
+      if (giftResult) {
+          giftResult.innerHTML = message;    
+          giftResult.className = `gift-result gift-${type}`;    
+          giftResult.style.display = 'block';    
+          setTimeout(() => giftResult.style.display = 'none', 5000);    
+      }
+  };    
+
+  // Gestion du solde utilisateur    
+  async function updateUserBalance() {    
+      if (!currentUser) return;    
+          
+      const snapshot = await get(ref(db, `users/${currentUser.uid}`));    
+      const balance = snapshot.val()?.balance || 0;    
+      
+      const giftBalanceValue = document.getElementById('giftBalanceValue');    
+      if (giftBalanceValue) {
+          giftBalanceValue.textContent = formatFCFA(balance);    
+      }
+  }    
+
+  // Validation du code bonus    
+  async function validateCode() {    
+      if (isProcessing) return;    
+      isProcessing = true;    
+
+      const giftCodeInput = document.getElementById('giftCode');    
+      const giftButton = document.getElementById('giftButton');    
+      const giftLoading = document.getElementById('giftLoading');    
+      const giftResult = document.getElementById('giftResult');
+      
+      if (!giftCodeInput || !giftButton) {
+          isProcessing = false;
+          return;
+      }
+
+      try {    
+          giftButton.disabled = true;    
+          if (giftLoading) giftLoading.style.display = 'block';    
+          if (giftResult) giftResult.style.display = 'none';    
+
+          const code = giftCodeInput.value.trim().toUpperCase();    
+          if (!code) {    
+              showResult('Veuillez entrer un code.', 'error');    
+              return;    
+          }    
+
+          // Vérification du code (sans index)   
+          const bonusCodesRef = ref(db, 'bonusCodes');    
+          const snapshot = await get(bonusCodesRef);    
+          
+          let codeKey = null;
+          let codeData = null;
+          
+          if (snapshot.exists()) {
+              // Recherche manuelle du code
+              snapshot.forEach((childSnapshot) => {
+                  const data = childSnapshot.val();
+                  if (data.code === code) {
+                      codeKey = childSnapshot.key;
+                      codeData = data;
+                  }
+              });
+          }
+
+          if (!codeKey || !codeData) {    
+              showResult('Code invalide ou expiré.', 'error');    
+              return;    
+          }    
+          const currentTime = Date.now();    
+
+          if (currentTime > codeData.expiresAt) {    
+              showResult('Ce code a expiré.', 'error');    
+              return;    
+          }    
+
+          if (codeData.used && codeData.usedBy === currentUser.uid) {    
+              showResult('Vous avez déjà utilisé ce code.', 'error');    
+              return;    
+          }    
+
+          // Mise à jour du code et du solde    
+          const userBalanceRef = ref(db, `users/${currentUser.uid}/balance`);
+          const currentBalance = (await get(userBalanceRef)).val() || 0;
+          
+          await Promise.all([    
+              set(ref(db, `bonusCodes/${codeKey}`), {    
+                  ...codeData,    
+                  used: true,    
+                  usedBy: currentUser.uid,    
+                  usedAt: currentTime    
+              }),    
+              set(userBalanceRef, currentBalance + codeData.amount),    
+              set(ref(db, `transactions/${currentUser.uid}/${Date.now()}`), {    
+                  type: 'bonus',    
+                  amount: codeData.amount,    
+                  timestamp: currentTime    
+              })    
+          ]);    
+
+          await updateUserBalance();    
+          showResult(`    
+              <div>🎉 Félicitations !</div>    
+              <div class="gift-amount">+${formatFCFA(codeData.amount)}</div>    
+              <div>Bonus crédité avec succès</div>    
+          `, 'success');    
+
+          giftCodeInput.value = '';    
+
+      } catch (error) {    
+          console.error('Erreur:', error);    
+          showResult('Une erreur est survenue. Veuillez réessayer.', 'error');    
+      } finally {    
+          isProcessing = false;    
+          if (giftButton) giftButton.disabled = false;    
+          if (giftLoading) giftLoading.style.display = 'none';    
+      }    
+  }    
+
+  // Event Listeners pour les codes bonus
+  function initializeBonusCodeListeners() {
+      const giftCodeInput = document.getElementById('giftCode');    
+      const giftButton = document.getElementById('giftButton');    
+      
+      if (giftCodeInput && giftButton) {
+          giftCodeInput.addEventListener('input', (e) => {    
+              giftButton.disabled = !e.target.value.trim();    
+          });    
+
+          giftButton.addEventListener('click', validateCode);    
+
+          giftCodeInput.addEventListener('keypress', (e) => {    
+              if (e.key === 'Enter' && giftCodeInput.value.trim()) validateCode();    
+          }); 
+      }
+  }
+
+  // Authentication    
+  onAuthStateChanged(auth, async (user) => {    
+      currentUser = user;    
+      if (user) {    
+          await updateUserBalance();    
+      } else {    
+          // Redirection vers la page de connexion    
+          console.log("Utilisateur non connecté");    
+      }    
+  });
+  
+  // Initialisation au chargement de la page    
+  window.onload = function() {
+      listenToTransactions();
+      initializeBonusCodeListeners();
+  };
+</script>
+
+<script>    
+    // Script pour le carrousel    
+    let currentSlide = 0;    
+    const carousel = document.querySelector('.carousel');    
+    const dots = document.querySelectorAll('.dot');    
+    const slideCount = document.querySelectorAll('.carousel-slide').length;    
+  
+    // Fonction pour changer de slide    
+    function goToSlide(n) {    
+        if (carousel) {
+            carousel.style.transform = `translateX(-${n * 33.333}%)`;    
+            currentSlide = n;    
+                
+            // Mise à jour des points indicateurs    
+            dots.forEach((dot, i) => {    
+                dot.classList.toggle('active', i === n);    
+            });    
+        }
+    }    
+  
+    // Fonction pour passer à la slide suivante    
+    function nextSlide() {    
+        currentSlide = (currentSlide + 1) % slideCount;    
+        goToSlide(currentSlide);    
+    }    
+  
+    // Configuration du carrousel automatique    
+    if (slideCount > 0) {
+        let slideInterval = setInterval(nextSlide, 5000);    
+      
+        // Permettre de cliquer sur les points pour naviguer    
+        dots.forEach((dot, i) => {    
+            dot.addEventListener('click', () => {    
+                clearInterval(slideInterval); // Arrêter le défilement automatique    
+                goToSlide(i);    
+                slideInterval = setInterval(nextSlide, 5000); // Redémarrer le défilement    
+            });    
+        });    
+    }
+</script>  
+</body>
+</html>
