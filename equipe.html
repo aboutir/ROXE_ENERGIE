@@ -522,15 +522,33 @@
     </footer>
 
     <!-- Firebase SDK -->
-    <script type="module">
-  // ✅ Import Firebase
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-  import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-  import { getStorage } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
+<script type="module">
+// ===============================
+// IMPORTS FIREBASE
+// ===============================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { 
+    getAuth, 
+    onAuthStateChanged, 
+    createUserWithEmailAndPassword, 
+    signInWithEmailAndPassword 
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { 
+    getDatabase, 
+    ref, 
+    get, 
+    set, 
+    onValue, 
+    query, 
+    orderByChild, 
+    equalTo 
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
 
-  // 🔐 Configuration Firebase
-  const firebaseConfig = {
+// ===============================
+// CONFIGURATION FIREBASE
+// ===============================
+const firebaseConfig = {
     apiKey: "AIzaSyB3pmvbQlu7LPLoE15mLI6fqRbOq2vSe3w",
     authDomain: "rox-deff1.firebaseapp.com",
     databaseURL: "https://rox-deff1-default-rtdb.firebaseio.com",
@@ -538,189 +556,270 @@
     storageBucket: "rox-deff1.appspot.com",
     messagingSenderId: "42974600657",
     appId: "1:42974600657:web:816ebe30f5a7e4ac1094f0"
-  };
-       
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const database = getDatabase(app);
+};
 
-        // State Management
-        let currentUser = null;
-        let teamMembers = [];
-        let totalTeamBonus = 0;
+// ===============================
+// INITIALISATION FIREBASE
+// ===============================
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const database = getDatabase(app);
 
-        // UI Elements
-        const elements = {
-            showTeamButton: document.getElementById('showTeamButton'),
-            closeTeamModalBtn: document.getElementById('closeTeamModalBtn'),
-            copyReferralCodeBtn: document.getElementById('copyReferralCodeBtn'),
-            copyReferralLinkBtn: document.getElementById('copyReferralLinkBtn'),
-            teamModal: document.getElementById('teamModal'),
-            teamMembersContainer: document.getElementById('teamMembersContainer'),
-            notification: document.getElementById('notification')
-        };
+// ===============================
+// VARIABLES D'ÉTAT GLOBAL
+// ===============================
+let currentUser = null;
+let teamMembers = [];
+let totalTeamBonus = 0;
 
-        // Utility Functions
-        const utils = {
-            formatCurrency: (amount) => {
-                return amount.toLocaleString('fr-FR', { 
-                    minimumFractionDigits: 0, 
-                    maximumFractionDigits: 0 
-                }) + ' FCFA';
-            },
+// ===============================
+// ÉLÉMENTS DOM
+// ===============================
+const elements = {
+    showTeamButton: document.getElementById('showTeamButton'),
+    closeTeamModalBtn: document.getElementById('closeTeamModalBtn'),
+    copyReferralCodeBtn: document.getElementById('copyReferralCodeBtn'),
+    copyReferralLinkBtn: document.getElementById('copyReferralLinkBtn'),
+    teamModal: document.getElementById('teamModal'),
+    teamMembersContainer: document.getElementById('teamMembersContainer'),
+    notification: document.getElementById('notification')
+};
 
-            formatDate: (dateString) => {
-                if (!dateString) return "Date inconnue";
-                return new Date(dateString).toLocaleDateString('fr-FR', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                });
-            },
+// ===============================
+// FONCTIONS UTILITAIRES
+// ===============================
+const utils = {
+    /**
+     * Formate un montant en FCFA
+     * @param {number} amount - Montant à formater
+     * @returns {string} Montant formaté
+     */
+    formatCurrency: (amount) => {
+        return amount.toLocaleString('fr-FR', { 
+            minimumFractionDigits: 0, 
+            maximumFractionDigits: 0 
+        }) + ' FCFA';
+    },
 
-            copyToClipboard: async (elementId) => {
-                try {
-                    const element = document.getElementById(elementId);
-                    await navigator.clipboard.writeText(element.value);
-                    
-                    // Show notification
-                    elements.notification.classList.add('show');
-                    setTimeout(() => {
-                        elements.notification.classList.remove('show');
-                    }, 3000);
-                } catch (err) {
-                    console.error('Erreur de copie:', err);
-                }
-            }
-        };
+    /**
+     * Formate une date en français
+     * @param {string} dateString - Date à formater
+     * @returns {string} Date formatée
+     */
+    formatDate: (dateString) => {
+        if (!dateString) return "Date inconnue";
+        return new Date(dateString).toLocaleDateString('fr-FR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    },
 
-        // UI Update Functions
-        const updateUI = {
-            teamStats: (members) => {
-                document.getElementById('teamCount').textContent = members.length;
-                
-                if (currentUser) {
-                    const userRef = ref(database, `users/${currentUser.uid}`);
-                    onValue(userRef, (snapshot) => {
-                        const userData = snapshot.val();
-                        if (userData) {
-                            totalTeamBonus = userData.totalReferralBonus || 0;
-                            document.getElementById('totalBonus').textContent = 
-                                utils.formatCurrency(totalTeamBonus);
-                        }
-                    });
-                }
-            },
-
-            teamMembers: (members) => {
-                if (members.length === 0) {
-                    elements.teamMembersContainer.innerHTML = `
-                        <div class="no-team-message" style="grid-column: 1/-1; text-align: center; padding: 40px; color: #a0aec0;">
-                            <i class="fas fa-users-slash" style="font-size: 3rem; margin-bottom: 20px;"></i>
-                            <h3>Aucun membre dans votre équipe</h3>
-                            <p>Commencez à parrainer des amis pour les ajouter à votre équipe !</p>
-                        </div>`;
-                    return;
-                }
-
-                elements.teamMembersContainer.innerHTML = members.map(member => `
-                    <div class="member-card">
-                        <div class="member-header">
-                            <div class="member-avatar">${member.username?.charAt(0).toUpperCase() || '?'}</div>
-                            <div>
-                                <div class="member-name">${member.username || 'Membre'}</div>
-                                <div class="member-date">Rejoint le ${utils.formatDate(member.createdAt)}</div>
-                            </div>
-                        </div>
-                        <div class="member-stats">
-                            <div class="stat-item">
-                                <div class="stat-label">Total investi</div>
-                                <div class="stat-value">${utils.formatCurrency(member.totalInvestments || 0)}</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-label">Bonus généré</div>
-                                <div class="stat-value">${utils.formatCurrency(member.totalBonusGenerated || 0)}</div>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-            }
-        };
-
-        // Event Listeners Setup
-        const setupEventListeners = () => {
-            elements.showTeamButton?.addEventListener('click', () => {
-                elements.teamModal.classList.add('active');
-            });
-
-            elements.closeTeamModalBtn?.addEventListener('click', () => {
-                elements.teamModal.classList.remove('active');
-            });
-
-            // Close modal when clicking outside
-            elements.teamModal?.addEventListener('click', (e) => {
-                if (e.target === elements.teamModal) {
-                    elements.teamModal.classList.remove('active');
-                }
-            });
-
-            elements.copyReferralCodeBtn?.addEventListener('click', () => 
-                utils.copyToClipboard('referralCode'));
+    /**
+     * Copie le contenu d'un élément dans le presse-papiers
+     * @param {string} elementId - ID de l'élément à copier
+     */
+    copyToClipboard: async (elementId) => {
+        try {
+            const element = document.getElementById(elementId);
+            await navigator.clipboard.writeText(element.value);
             
-            elements.copyReferralLinkBtn?.addEventListener('click', () => 
-                utils.copyToClipboard('referralLink'));
-        };
+            // Afficher la notification
+            elements.notification.classList.add('show');
+            setTimeout(() => {
+                elements.notification.classList.remove('show');
+            }, 3000);
+        } catch (err) {
+            console.error('Erreur de copie:', err);
+        }
+    }
+};
 
-        // Start Application
-        const startApp = () => {
-            setupEventListeners();
-
-            onAuthStateChanged(auth, (user) => {
-                if (!user) {
-                    console.log("Utilisateur non connecté");
-                    return;
+// ===============================
+// FONCTIONS DE MISE À JOUR UI
+// ===============================
+const updateUI = {
+    /**
+     * Met à jour les statistiques de l'équipe
+     * @param {Array} members - Liste des membres
+     */
+    teamStats: (members) => {
+        // Mise à jour du nombre de membres
+        const teamCountElement = document.getElementById('teamCount');
+        if (teamCountElement) {
+            teamCountElement.textContent = members.length;
+        }
+        
+        // Mise à jour du bonus total
+        if (currentUser) {
+            const userRef = ref(database, `users/${currentUser.uid}`);
+            onValue(userRef, (snapshot) => {
+                const userData = snapshot.val();
+                if (userData) {
+                    totalTeamBonus = userData.totalReferralBonus || 0;
+                    const totalBonusElement = document.getElementById('totalBonus');
+                    if (totalBonusElement) {
+                        totalBonusElement.textContent = utils.formatCurrency(totalTeamBonus);
+                    }
                 }
-
-                currentUser = user;
-                
-                // Listen for user data changes
-                const userRef = ref(database, 'users/' + user.uid);
-                onValue(userRef, (snapshot) => {
-                    const userData = snapshot.val();
-                    if (userData) {
-                        document.getElementById('referralCode').value = userData.referralCode || "CODE-NON-DISPONIBLE";
-                        document.getElementById('referralLink').value = 
-                            `${window.location.origin}/index.html?ref=${userData.referralCode}`;
-                    }
-                });
-
-                // Listen for team members
-                const teamQuery = query(
-                    ref(database, 'users'),
-                    orderByChild('referredBy'),
-                    equalTo(user.uid)
-                );
-
-                onValue(teamQuery, (snapshot) => {
-                    teamMembers = [];
-                    if (snapshot.exists()) {
-                        snapshot.forEach((memberSnapshot) => {
-                            const memberData = {
-                                ...memberSnapshot.val(),
-                                uid: memberSnapshot.key
-                            };
-                            teamMembers.push(memberData);
-                        });
-                    }
-                    updateUI.teamStats(teamMembers);
-                    updateUI.teamMembers(teamMembers);
-                });
             });
-        };
+        }
+    },
 
-        // Start the application
-        startApp();
-    </script>
+    /**
+     * Met à jour l'affichage des membres de l'équipe
+     * @param {Array} members - Liste des membres
+     */
+    teamMembers: (members) => {
+        if (!elements.teamMembersContainer) return;
+
+        // Cas où il n'y a pas de membres
+        if (members.length === 0) {
+            elements.teamMembersContainer.innerHTML = `
+                <div class="no-team-message" style="grid-column: 1/-1; text-align: center; padding: 40px; color: #a0aec0;">
+                    <i class="fas fa-users-slash" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                    <h3>Aucun membre dans votre équipe</h3>
+                    <p>Commencez à parrainer des amis pour les ajouter à votre équipe !</p>
+                </div>`;
+            return;
+        }
+
+        // Affichage des membres
+        elements.teamMembersContainer.innerHTML = members.map(member => `
+            <div class="member-card">
+                <div class="member-header">
+                    <div class="member-avatar">${member.username?.charAt(0).toUpperCase() || '?'}</div>
+                    <div>
+                        <div class="member-name">${member.username || 'Membre'}</div>
+                        <div class="member-date">Rejoint le ${utils.formatDate(member.createdAt)}</div>
+                    </div>
+                </div>
+                <div class="member-stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Total investi</div>
+                        <div class="stat-value">${utils.formatCurrency(member.totalInvestments || 0)}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Bonus généré</div>
+                        <div class="stat-value">${utils.formatCurrency(member.totalBonusGenerated || 0)}</div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+};
+
+// ===============================
+// GESTION DES ÉVÉNEMENTS
+// ===============================
+const setupEventListeners = () => {
+    // Bouton pour afficher l'équipe
+    elements.showTeamButton?.addEventListener('click', () => {
+        elements.teamModal?.classList.add('active');
+    });
+
+    // Bouton pour fermer la modal
+    elements.closeTeamModalBtn?.addEventListener('click', () => {
+        elements.teamModal?.classList.remove('active');
+    });
+
+    // Fermeture de la modal en cliquant à l'extérieur
+    elements.teamModal?.addEventListener('click', (e) => {
+        if (e.target === elements.teamModal) {
+            elements.teamModal.classList.remove('active');
+        }
+    });
+
+    // Copie du code de parrainage
+    elements.copyReferralCodeBtn?.addEventListener('click', () => 
+        utils.copyToClipboard('referralCode'));
+    
+    // Copie du lien de parrainage
+    elements.copyReferralLinkBtn?.addEventListener('click', () => 
+        utils.copyToClipboard('referralLink'));
+};
+
+// ===============================
+// GESTION DE L'AUTHENTIFICATION
+// ===============================
+const handleAuthStateChange = (user) => {
+    if (!user) {
+        console.log("Utilisateur non connecté");
+        return;
+    }
+
+    currentUser = user;
+    
+    // Écouter les changements de données utilisateur
+    const userRef = ref(database, 'users/' + user.uid);
+    onValue(userRef, (snapshot) => {
+        const userData = snapshot.val();
+        if (userData) {
+            // Mise à jour du code de parrainage
+            const referralCodeElement = document.getElementById('referralCode');
+            if (referralCodeElement) {
+                referralCodeElement.value = userData.referralCode || "CODE-NON-DISPONIBLE";
+            }
+            
+            // Mise à jour du lien de parrainage
+            const referralLinkElement = document.getElementById('referralLink');
+            if (referralLinkElement) {
+                referralLinkElement.value = 
+                    `${window.location.origin}/index.html?ref=${userData.referralCode}`;
+            }
+        }
+    });
+
+    // Écouter les membres de l'équipe
+    const teamQuery = query(
+        ref(database, 'users'),
+        orderByChild('referredBy'),
+        equalTo(user.uid)
+    );
+
+    onValue(teamQuery, (snapshot) => {
+        teamMembers = [];
+        
+        if (snapshot.exists()) {
+            snapshot.forEach((memberSnapshot) => {
+                const memberData = {
+                    ...memberSnapshot.val(),
+                    uid: memberSnapshot.key
+                };
+                teamMembers.push(memberData);
+            });
+        }
+        
+        // Mettre à jour l'interface utilisateur
+        updateUI.teamStats(teamMembers);
+        updateUI.teamMembers(teamMembers);
+    });
+};
+
+// ===============================
+// INITIALISATION DE L'APPLICATION
+// ===============================
+const initApp = () => {
+    console.log("🚀 Initialisation de l'application...");
+    
+    // Configuration des événements
+    setupEventListeners();
+    
+    // Écoute des changements d'authentification
+    onAuthStateChanged(auth, handleAuthStateChange);
+    
+    console.log("✅ Application initialisée avec succès");
+};
+
+// ===============================
+// DÉMARRAGE DE L'APPLICATION
+// ===============================
+// Attendre que le DOM soit chargé
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+} else {
+    initApp();
+}
+</script>
 </body>
 </html>
