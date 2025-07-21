@@ -513,7 +513,16 @@ h1 i {
   // ✅ Import Firebase
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-  import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+  import { 
+    getDatabase, 
+    ref, 
+    get, 
+    set, 
+    onValue, 
+    query, 
+    orderByChild, 
+    equalTo 
+  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
   import { getStorage } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
 
   // 🔐 Configuration Firebase
@@ -527,230 +536,219 @@ h1 i {
     appId: "1:42974600657:web:816ebe30f5a7e4ac1094f0"
   };
 
-try {
-    // Initialisation de Firebase
+  try {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
     const creditedTransactions = new Set();
 
-    // Fonction de mise à jour du solde utilisateur
     async function updateUserBalance(userId, amount, transactionId) {
-        if (creditedTransactions.has(transactionId)) return;
+      if (creditedTransactions.has(transactionId)) return;
 
-        try {
-            const userRef = ref(db, `users/${userId}`);
-            const snapshot = await get(userRef);
+      try {
+        const userRef = ref(db, `users/${userId}`);
+        const snapshot = await get(userRef);
 
-            if (snapshot.exists()) {
-                const userData = snapshot.val();
-                const currentBalance = userData.solde || 0;
-                const newBalance = currentBalance + parseFloat(amount);
+        if (snapshot.exists()) {
+          const userData = snapshot.val();
+          const currentBalance = userData.solde || 0;
+          const newBalance = currentBalance + parseFloat(amount);
 
-                const updates = {};
-                updates[`users/${userId}/solde`] = newBalance;
-                updates[`transactions/${transactionId}/credited`] = true;
+          const updates = {};
+          updates[`users/${userId}/solde`] = newBalance;
+          updates[`transactions/${transactionId}/credited`] = true;
 
-                await update(ref(db), updates);
-                creditedTransactions.add(transactionId);
-            }
-        } catch (error) {
-            console.error('Erreur de mise à jour du solde:', error);
+          await set(ref(db), updates);
+          creditedTransactions.add(transactionId);
         }
+      } catch (error) {
+        console.error('Erreur de mise à jour du solde:', error);
+      }
     }
 
-    // Fonction de formatage de date
     function formatDate(dateString) {
-        try {
-            const date = new Date(dateString);
-            if (isNaN(date.getTime())) throw new Error('Date invalide');
-            
-            return new Intl.DateTimeFormat('fr-FR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            }).format(date).replace(',', ' à');
-        } catch (error) {
-            return 'Date non disponible';
-        }
+      try {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) throw new Error('Date invalide');
+
+        return new Intl.DateTimeFormat('fr-FR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }).format(date).replace(',', ' à');
+      } catch (error) {
+        return 'Date non disponible';
+      }
     }
 
-    // Fonction pour obtenir la classe CSS du statut
     function getStatusClass(status) {
-        const statusClasses = {
-            success: 'status-success',
-            pending: 'status-pending',
-            failed: 'status-failed'
-        };
-        return statusClasses[status] || '';
+      const statusClasses = {
+        success: 'status-success',
+        pending: 'status-pending',
+        failed: 'status-failed'
+      };
+      return statusClasses[status] || '';
     }
 
-    // Fonction de traduction du statut
     function translateStatus(status) {
-        const translations = {
-            success: 'Crédité',
-            pending: 'En cours de vérification',
-            failed: 'Échec'
-        };
-        return translations[status] || status;
+      const translations = {
+        success: 'Crédité',
+        pending: 'En cours de vérification',
+        failed: 'Échec'
+      };
+      return translations[status] || status;
     }
 
-    // Fonction de création d'un élément d'historique
     function createHistoryItem(transaction, userId) {
-        const historyItem = document.createElement('div');
-        historyItem.className = 'history-item';
-        historyItem.dataset.transactionId = transaction.transactionId || '';
+      const historyItem = document.createElement('div');
+      historyItem.className = 'history-item';
+      historyItem.dataset.transactionId = transaction.transactionId || '';
 
-        if (transaction.status === 'success' && !transaction.credited && userId) {
-            updateUserBalance(userId, transaction.amount || 0, transaction.transactionId);
-        }
+      if (transaction.status === 'success' && !transaction.credited && userId) {
+        updateUserBalance(userId, transaction.amount || 0, transaction.transactionId);
+      }
 
-        historyItem.innerHTML = `
-            <div class="history-info">
-                <div class="info-group">
-                    <span class="info-label">Montant</span>
-                    <span class="info-value">${transaction.amount || 0} FCFA</span>
-                </div>
-                <div class="info-group">
-                    <span class="info-label">Numéro rechargé</span>
-                    <span class="info-value">${transaction.phone || 'Non spécifié'}</span>
-                </div>
-            </div>
-            <div class="history-info">
-                <div class="info-group">
-                    <span class="info-label">Opérateur</span>
-                    <span class="info-value">${transaction.operator ? transaction.operator.toUpperCase() : 'Non spécifié'}</span>
-                </div>
-                <div class="info-group">
-                    <span class="info-label">ID Transaction</span>
-                    <span class="info-value">${transaction.transactionId || 'Non spécifié'}</span>
-                </div>
-            </div>
-            <div class="history-info">
-                <div class="info-group">
-                    <span class="info-label">Date</span>
-                    <span class="info-value">${formatDate(transaction.date)}</span>
-                </div>
-                <div class="info-group">
-                    <span class="info-label">Numéro de paiement</span>
-                    <span class="info-value">${transaction.userPaymentNumber || 'Non spécifié'}</span>
-                </div>
-                ${transaction.processedDate ? `
-                    <div class="processing-info">Traité le ${formatDate(transaction.processedDate)}</div>
-                ` : ''}
-                ${transaction.status === 'failed' && transaction.rejectReason ? `
-                    <div class="reject-reason">Motif du rejet: ${transaction.rejectReason}</div>
-                ` : ''}
-                <div class="status ${getStatusClass(transaction.status || 'pending')}">
-                    ${translateStatus(transaction.status || 'pending')}
-                </div>
-            </div>
-        `;
+      historyItem.innerHTML = `
+        <div class="history-info">
+          <div class="info-group">
+            <span class="info-label">Montant</span>
+            <span class="info-value">${transaction.amount || 0} FCFA</span>
+          </div>
+          <div class="info-group">
+            <span class="info-label">Numéro rechargé</span>
+            <span class="info-value">${transaction.phone || 'Non spécifié'}</span>
+          </div>
+        </div>
+        <div class="history-info">
+          <div class="info-group">
+            <span class="info-label">Opérateur</span>
+            <span class="info-value">${transaction.operator ? transaction.operator.toUpperCase() : 'Non spécifié'}</span>
+          </div>
+          <div class="info-group">
+            <span class="info-label">ID Transaction</span>
+            <span class="info-value">${transaction.transactionId || 'Non spécifié'}</span>
+          </div>
+        </div>
+        <div class="history-info">
+          <div class="info-group">
+            <span class="info-label">Date</span>
+            <span class="info-value">${formatDate(transaction.date)}</span>
+          </div>
+          <div class="info-group">
+            <span class="info-label">Numéro de paiement</span>
+            <span class="info-value">${transaction.userPaymentNumber || 'Non spécifié'}</span>
+          </div>
+          ${transaction.processedDate ? `
+            <div class="processing-info">Traité le ${formatDate(transaction.processedDate)}</div>
+          ` : ''}
+          ${transaction.status === 'failed' && transaction.rejectReason ? `
+            <div class="reject-reason">Motif du rejet: ${transaction.rejectReason}</div>
+          ` : ''}
+          <div class="status ${getStatusClass(transaction.status || 'pending')}">
+            ${translateStatus(transaction.status || 'pending')}
+          </div>
+        </div>
+      `;
 
-        return historyItem;
+      return historyItem;
     }
 
-    // Fonction d'affichage des transactions
     function displayTransactions(transactions, userId) {
-        const historyList = document.getElementById('historyList');
-        if (!historyList) return;
-        
-        if (!transactions || Object.keys(transactions).length === 0) {
-            historyList.innerHTML = '<div class="no-records">Aucune transaction trouvée</div>';
-            return;
+      const historyList = document.getElementById('historyList');
+      if (!historyList) return;
+
+      if (!transactions || Object.keys(transactions).length === 0) {
+        historyList.innerHTML = '<div class="no-records">Aucune transaction trouvée</div>';
+        return;
+      }
+
+      const userTransactions = Object.entries(transactions)
+        .filter(([_, transaction]) => transaction.userId === userId)
+        .map(([id, transaction]) => ({ ...transaction, id }))
+        .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+
+      if (userTransactions.length === 0) {
+        historyList.innerHTML = '<div class="no-records">Aucune transaction trouvée</div>';
+        return;
+      }
+
+      const fragment = document.createDocumentFragment();
+      let hasNewItems = false;
+
+      userTransactions.forEach(transaction => {
+        const existingItem = document.querySelector(
+          `[data-transaction-id="${transaction.transactionId}"]`
+        );
+
+        if (existingItem) {
+          const newItem = createHistoryItem(transaction, userId);
+          if (existingItem.innerHTML !== newItem.innerHTML) {
+            existingItem.parentNode.replaceChild(newItem, existingItem);
+          }
+        } else {
+          fragment.appendChild(createHistoryItem(transaction, userId));
+          hasNewItems = true;
         }
+      });
 
-        // Filtrer les transactions pour ne garder que celles de l'utilisateur courant
-        const userTransactions = Object.entries(transactions)
-            .filter(([_, transaction]) => transaction.userId === userId)
-            .map(([id, transaction]) => ({...transaction, id}))
-            .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
-
-        if (userTransactions.length === 0) {
-            historyList.innerHTML = '<div class="no-records">Aucune transaction trouvée</div>';
-            return;
+      if (hasNewItems) {
+        if (historyList.children.length === 0) {
+          historyList.appendChild(fragment);
+        } else {
+          historyList.insertBefore(fragment, historyList.firstChild);
         }
+      }
 
-        const fragment = document.createDocumentFragment();
-        let hasNewItems = false;
-
-        userTransactions.forEach(transaction => {
-            const existingItem = document.querySelector(
-                `[data-transaction-id="${transaction.transactionId}"]`
-            );
-
-            if (existingItem) {
-                const newItem = createHistoryItem(transaction, userId);
-                if (existingItem.innerHTML !== newItem.innerHTML) {
-                    existingItem.parentNode.replaceChild(newItem, existingItem);
-                }
-            } else {
-                fragment.appendChild(createHistoryItem(transaction, userId));
-                hasNewItems = true;
-            }
-        });
-
-        if (hasNewItems) {
-            if (historyList.children.length === 0) {
-                historyList.appendChild(fragment);
-            } else {
-                historyList.insertBefore(fragment, historyList.firstChild);
-            }
+      const currentIds = new Set(userTransactions.map(t => t.transactionId));
+      Array.from(historyList.children).forEach(child => {
+        const id = child.dataset.transactionId;
+        if (id && !currentIds.has(id)) {
+          child.remove();
         }
-
-        const currentIds = new Set(userTransactions.map(t => t.transactionId));
-        Array.from(historyList.children).forEach(child => {
-            const id = child.dataset.transactionId;
-            if (id && !currentIds.has(id)) {
-                child.remove();
-            }
-        });
+      });
     }
 
-    // Écouteur d'authentification
     onAuthStateChanged(auth, (user) => {
-        const historyList = document.getElementById('historyList');
-        if (!historyList) return;
-        
-        if (user) {
-            // Création de la requête avec query, orderByChild et equalTo pour filtrer par userId
-            const transactionsRef = query(
-                ref(db, 'transactions'),
-                orderByChild('userId'),
-                equalTo(user.uid)
-            );
-            
-            // Écoute des changements
-            onValue(transactionsRef, (snapshot) => {
-                try {
-                    const transactions = snapshot.val();
-                    displayTransactions(transactions, user.uid);
-                } catch (error) {
-                    console.error('Erreur lors de la récupération des transactions:', error);
-                    if (historyList) {
-                        historyList.innerHTML = '<div class="no-records">Erreur lors du chargement des transactions</div>';
-                    }
-                }
-            }, (error) => {
-                console.error('Erreur Firebase:', error);
-                if (historyList) {
-                    historyList.innerHTML = '<div class="no-records">Erreur de connexion</div>';
-                }
-            });
-        } else {
-            historyList.innerHTML = '<div class="no-records">Veuillez vous connecter pour voir votre historique</div>';
-        }
+      const historyList = document.getElementById('historyList');
+      if (!historyList) return;
+
+      if (user) {
+        const transactionsRef = query(
+          ref(db, 'transactions'),
+          orderByChild('userId'),
+          equalTo(user.uid)
+        );
+
+        onValue(transactionsRef, (snapshot) => {
+          try {
+            const transactions = snapshot.val();
+            displayTransactions(transactions, user.uid);
+          } catch (error) {
+            console.error('Erreur lors de la récupération des transactions:', error);
+            if (historyList) {
+              historyList.innerHTML = '<div class="no-records">Erreur lors du chargement des transactions</div>';
+            }
+          }
+        }, (error) => {
+          console.error('Erreur Firebase:', error);
+          if (historyList) {
+            historyList.innerHTML = '<div class="no-records">Erreur de connexion</div>';
+          }
+        });
+      } else {
+        historyList.innerHTML = '<div class="no-records">Veuillez vous connecter pour voir votre historique</div>';
+      }
     });
 
-} catch (error) {
+  } catch (error) {
     console.error('Erreur d\'initialisation:', error);
     const historyList = document.getElementById('historyList');
     if (historyList) {
-        historyList.innerHTML = '<div class="no-records">Erreur d\'initialisation de l\'application</div>';
+      historyList.innerHTML = '<div class="no-records">Erreur d\'initialisation de l\'application</div>';
     }
-}
+  }
 </script>
 </body>
 </html>
