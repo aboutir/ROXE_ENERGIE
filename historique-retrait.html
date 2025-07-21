@@ -467,12 +467,20 @@
         </div>
     </div>
 
-   <script type="module">
+  <script type="module">
   // ✅ Import Firebase
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-  import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-  import { getStorage } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
+  import {
+    getAuth,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+  import {
+    getDatabase,
+    ref,
+    get,
+    set,
+    onValue  // ❗ Nécessaire pour afficher l'historique en temps réel
+  } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
   // 🔐 Configuration Firebase
   const firebaseConfig = {
@@ -484,99 +492,106 @@
     messagingSenderId: "42974600657",
     appId: "1:42974600657:web:816ebe30f5a7e4ac1094f0"
   };
-   
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const database = getDatabase(app);
 
-        function formatAmount(amount) {
-            return `${amount.toLocaleString('fr-FR')} FCFA`;
-        }
+  // ✅ Initialisation Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const database = getDatabase(app);
 
-        function formatDate(timestamp) {
-            return new Date(timestamp).toLocaleString('fr-FR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
+  // 🔄 Formateurs
+  function formatAmount(amount) {
+    return `${amount.toLocaleString('fr-FR')} FCFA`;
+  }
 
-        function createWithdrawalCard(withdrawal) {
-            return `
-                <div class="card">
-                    <div class="row">
-                        <div class="left-section">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMSA1bC0xMCA5LTEwLTkiLz48cGF0aCBkPSJNMjEgMTlsLTEwLTktMTAgOSIvPjwvc3ZnPg==" alt="Retirer" class="icon">
-                            <span class="label black-text">Montant demandé</span>
-                        </div>
-                        <span class="value black-text">${formatAmount(withdrawal.amount)}</span>
-                    </div>
+  function formatDate(timestamp) {
+    return new Date(timestamp).toLocaleString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
 
-                    <div class="row">
-                        <div class="left-section">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIi8+PHBvbHlsaW5lIHBvaW50cz0iMTIgNiAxMiAxMiAxNiAxNCIvPjwvc3ZnPg==" alt="Temps" class="icon">
-                            <span class="label">Date de demande</span>
-                        </div>
-                        <span class="value">${formatDate(withdrawal.timestamp)}</span>
-                    </div>
+  // 🧾 Génération carte retrait
+  function createWithdrawalCard(withdrawal) {
+    return `
+      <div class="card">
+        <div class="row">
+          <div class="left-section">
+            <img src="..." alt="Retirer" class="icon">
+            <span class="label black-text">Montant demandé</span>
+          </div>
+          <span class="value black-text">${formatAmount(withdrawal.amount)}</span>
+        </div>
 
-                    <div class="row">
-                        <div class="left-section">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIi8+PGxpbmUgeDE9IjEyIiB5MT0iMTYiIHgyPSIxMiIgeTI9IjEyIi8+PGxpbmUgeDE9IjEyIiB5MT0iOCIgeDI9IjEyIiB5Mj0iOCIvPjwvc3ZnPg==" alt="Statut" class="icon">
-                            <span class="label">Statut</span>
-                        </div>
-                        <span class="value blue-text">${withdrawal.status}</span>
-                    </div>
+        <div class="row">
+          <div class="left-section">
+            <img src="..." alt="Temps" class="icon">
+            <span class="label">Date de demande</span>
+          </div>
+          <span class="value">${formatDate(withdrawal.timestamp)}</span>
+        </div>
 
-                    <div class="row">
-                        <div class="left-section">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxjaXJjbGUgY3g9IjEyIiBjeT0iMTIiIHI9IjEwIi8+PGxpbmUgeDE9IjEyIiB5MT0iOCIgeDI9IjEyIiB5Mj0iMTYiLz48bGluZSB4MT0iOCIgeTE9IjEyIiB4Mj0iMTYiIHkyPSIxMiIvPjwvc3ZnPg==" alt="Montant" class="icon">
-                            <span class="label">Montant net</span>
-                        </div>
-                        <span class="value orange-text">${formatAmount(withdrawal.amount - withdrawal.fees)}</span>
-                    </div>
-                </div>
-            `;
-        }
+        <div class="row">
+          <div class="left-section">
+            <img src="..." alt="Statut" class="icon">
+            <span class="label">Statut</span>
+          </div>
+          <span class="value blue-text">${withdrawal.status}</span>
+        </div>
 
-        function displayWithdrawalHistory(history) {
-            const container = document.getElementById('history-container');
-            
-            if (!history || Object.keys(history).length === 0) {
-                container.innerHTML = `
-                    <div class="no-history">
-                        Aucun historique de retrait disponible
-                    </div>`;
-                return;
-            }
+        <div class="row">
+          <div class="left-section">
+            <img src="..." alt="Montant" class="icon">
+            <span class="label">Montant net</span>
+          </div>
+          <span class="value orange-text">${formatAmount(withdrawal.amount - withdrawal.fees)}</span>
+        </div>
+      </div>
+    `;
+  }
 
-            container.innerHTML = '';
-            Object.entries(history)
-                .sort(([, a], [, b]) => b.timestamp - a.timestamp)
-                .forEach(([key, withdrawal]) => {
-                    container.innerHTML += createWithdrawalCard(withdrawal);
-                });
-        }
+  // 📄 Affichage historique
+  function displayWithdrawalHistory(history) {
+    const container = document.getElementById('history-container');
+    if (!container) return;
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const historyRef = ref(database, `users/${user.uid}/withdrawalHistory`);
-                onValue(historyRef, (snapshot) => {
-                    const history = snapshot.val();
-                    displayWithdrawalHistory(history);
-                });
-            } else {
-                window.location.href = 'login.html';
-            }
-        });
+    if (!history || Object.keys(history).length === 0) {
+      container.innerHTML = `
+        <div class="no-history">
+          Aucun historique de retrait disponible
+        </div>`;
+      return;
+    }
 
-        document.querySelector('.back-arrow').addEventListener('click', (e) => {
-            e.preventDefault();
-            history.back();
-        });
-    </script>    
+    container.innerHTML = '';
+    Object.entries(history)
+      .sort(([, a], [, b]) => b.timestamp - a.timestamp)
+      .forEach(([key, withdrawal]) => {
+        container.innerHTML += createWithdrawalCard(withdrawal);
+      });
+  }
+
+  // 🔒 Auth & récupération des données
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const historyRef = ref(database, `users/${user.uid}/withdrawalHistory`);
+      onValue(historyRef, (snapshot) => {
+        const history = snapshot.val();
+        displayWithdrawalHistory(history);
+      });
+    } else {
+      window.location.href = 'login.html';
+    }
+  });
+
+  // ⬅️ Gestion retour arrière
+  document.querySelector('.back-arrow')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    history.back();
+  });
+</script>   
  
 </body>
 </html>
