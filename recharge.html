@@ -12,7 +12,7 @@
             --secondary-color: #ff6c5c;
             --background-color: #f5f7fa;
             --text-color: #4740ff;
-         a
+            --card-background: rgba(255, 255, 255, 0.95);
             --success-color: #4CAF50;
             --error-color: #ff4757;
         }
@@ -31,8 +31,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            padding: 20px;
             background-image: 
                 linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
                 url('https://image.noelshack.com/fichiers/2025/29/7/1752967991-fond-communication-reseau-abstrait-3d-conception-particules-fluides-1048-16923.jpg');
@@ -43,24 +41,29 @@
             margin: 0 auto;
             position: relative;
             min-height: 100vh;
-            padding-bottom: 70px;
+            padding: 20px;
         }
         
         .container {
-            background-color: var(--card-background);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            background-color: transparent;
+            border-radius: 0;
+            box-shadow: none;
             padding: 40px;
             width: 100%;
             max-width: 500px;
-            transform: translateY(-20px);
-            transition: transform 0.3s ease;
             position: relative;
             z-index: 10;
         }
         
-        .container:hover {
-            transform: translateY(-25px);
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         h1 {
@@ -86,9 +89,8 @@
         }
         
         .operator-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            display: flex;
+            justify-content: center;
             margin-bottom: 25px;
         }
         
@@ -105,7 +107,7 @@
         .operator-logo {
             background-color: #fff;
             border-radius: 15px;
-            padding: 15px 10px;
+            padding: 20px 30px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -114,19 +116,26 @@
             border: 2px solid #e0e6ed;
             height: 100%;
             text-align: center;
+            min-width: 150px;
         }
         
         .operator-logo i {
-            font-size: 2rem;
-            margin-bottom: 8px;
-            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #00d4aa;
+        }
+        
+        .operator-logo span {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #00d4aa;
         }
         
         .operator-option input[type="radio"]:checked + .operator-logo {
-            background-color: rgba(255, 31, 0, 0.1);
-            border-color: var(--primary-color);
+            background-color: rgba(0, 212, 170, 0.1);
+            border-color: #00d4aa;
             transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(255, 31, 0, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 212, 170, 0.2);
         }
         
         .form-group {
@@ -173,7 +182,7 @@
         input:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(255, 31, 0, 0.2);
+            box-shadow: 0 0 0 3px rgba(128, 152, 255, 0.2);
         }
         
         .quick-amount-grid {
@@ -195,7 +204,7 @@
         }
         
         .quick-amount-btn:hover, .quick-amount-btn.selected {
-            background-color: rgba(255, 31, 0, 0.1);
+            background-color: rgba(128, 152, 255, 0.1);
             border-color: var(--primary-color);
             color: var(--primary-color);
         }
@@ -241,13 +250,13 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            box-shadow: 0 4px 15px rgba(255, 31, 0, 0.3);
+            box-shadow: 0 4px 15px rgba(128, 152, 255, 0.3);
         }
         
         button:hover {
             opacity: 0.9;
             transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(255, 31, 0, 0.4);
+            box-shadow: 0 10px 20px rgba(128, 152, 255, 0.4);
         }
         
         .loading {
@@ -313,7 +322,7 @@
                 transform: none;
             }
             
-            .operator-grid, .quick-amount-grid {
+            .quick-amount-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
             }
@@ -402,18 +411,15 @@
         <h1>ℝ𝔼ℂℍ𝔸ℝ𝔾𝔼</h1>
         <form id="rechargeForm">
             <div class="operator-grid">
-       
-        
-          
                 <label class="operator-option">
-                    <input type="radio" name="operator" value="wave" required>
+                    <input type="radio" name="operator" value="wave" required checked>
                     <div class="operator-logo">
                         <i class="fas fa-wave-square"></i>
                         <span>𝕎𝔸𝕍𝔼</span>
                     </div>
-                
+                </label>
             </div>
-            <div id="operatorError" class="error"></div> <!-- Correction ajoutée ici -->
+            <div id="operatorError" class="error"></div>
             
             <div class="form-group">
                 <label for="phone">
@@ -438,9 +444,9 @@
                     <div class="quick-amount-btn" data-amount="5000">5 000 FCFA</div>
                     <div class="quick-amount-btn" data-amount="10000">10 000 FCFA</div>
                     <div class="quick-amount-btn" data-amount="20000">20 000 FCFA</div>
-                    <div class="quick-amount-btn" data-amount="35000">35 000 FCFA</div>
-                    <div class="quick-amount-btn" data-amount="50000">50 000 FCFA</div>
+                    <div class="quick-amount-btn" data-amount="40000">40 000 FCFA</div>
                     <div class="quick-amount-btn" data-amount="100000">100 000 FCFA</div>
+                    <div class="quick-amount-btn" data-amount="200000">200 000 FCFA</div>
                 </div>
                 <div class="input-wrapper">
                     <i class="fas fa-dollar-sign icon-wrapper"></i>
@@ -468,7 +474,31 @@
     
     <div id="notification" class="notification"></div>
     
-   
+    <nav class="navigation" style="display: none;">
+        <a href="home.html" class="nav-item">
+            <div class="nav-icon">
+                <i class="fas fa-home"></i>
+            </div>
+            Accueil
+        </a>
+        <a href="recharge.html" class="nav-item active">
+            <div class="nav-icon">
+                <i class="fas fa-plus-circle"></i>
+            </div>
+            Recharge
+        </a>
+        <a href="history.html" class="nav-item">
+            <div class="nav-icon">
+                <i class="fas fa-history"></i>
+            </div>
+            Historique
+        </a>
+        <a href="profile.html" class="nav-item">
+            <div class="nav-icon">
+                <i class="fas fa-user"></i>
+            </div>
+            Profil
+        </a>
     </nav>
 
     <script type="module">
@@ -507,11 +537,7 @@
             const notification = document.getElementById('notification');    
             
             const operatorNumbers = {    
-                'mtn': '+2250554049897',    
-                'moov': 'indisponible',    
-                'orange': '+2250700258398',    
-                'wave': '2250720392189',    
-                'usdt': 'TArN5XsrxyhtuzxwKQiWNTBsmMm9Brkim9'    
+                'wave': '2250720392189'
             };    
             
             function showLoading() {    
