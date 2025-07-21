@@ -338,10 +338,16 @@
     </div>
     
 <script type="module">
+  // Import des modules Firebase
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-  import { 
-    getDatabase, ref, get, push, update 
+  import {
+    getDatabase,
+    ref,
+    get,
+    push,
+    serverTimestamp,
+    update
   } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
   // Configuration Firebase
@@ -355,15 +361,15 @@
     appId: "1:42974600657:web:816ebe30f5a7e4ac1094f0"
   };
 
+  // Initialisation Firebase
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-  const db = getDatabase(app);
+  const database = getDatabase(app);
 
   const MIN_WITHDRAWAL = 1000;
   const MAX_WITHDRAWAL = 850000;
-
-  let currentUser = null;
   let currentBalance = 0;
+  let currentUser = null;
   let userWithdrawalConfig = null;
 
   function isValidWithdrawalTime() {
@@ -372,139 +378,146 @@
     return hour >= 9 && hour < 17;
   }
 
-  async function loadUserData(userId) {
+  async function loadUserData(uid) {
     try {
-      const userRef = ref(db, `users/${userId}`);
-      const [userSnap, configSnap] = await Promise.all([
-        get(userRef),
-        get(ref(db, `users/${userId}/withdrawalConfig`))
-      ]);
+      const userRef = ref(database, `users/${uid}`);
+      const snapshot = await get(userRef);
 
-      if (userSnap.exists()) {
-        const data = userSnap.val();
-        currentBalance = data.solde || 0;
-        document.getElementById('current-balance').textContent = formatAmount(currentBalance);
+      if (snapshot.exists()) {
+        const userData = snapshot.val();
+        currentBalance = userData.balance || 0;
+        userWithdrawalConfig = userData.withdrawalConfig || null;
+        document.getElementById("current-balance").textContent = formatAmount(currentBalance);
+      } else {
+        document.getElementById("current-balance").textContent = "Utilisateur inconnu";
       }
-
-      if (configSnap.exists()) {
-        userWithdrawalConfig = configSnap.val();
-      }
-    } catch (err) {
-      console.error("Erreur chargement utilisateur:", err);
-      showMessage("Erreur lors du chargement des données.");
+    } catch (error) {
+      console.error("Erreur chargement données:", error);
+      showMessage("Erreur chargement données");
     }
   }
 
   function formatAmount(amount) {
-    return parseFloat(amount || 0).toLocaleString('fr-FR') + " FCFA";
+    return amount.toLocaleString("fr-FR") + " FCFA";
   }
 
-  function showMessage(message, isError = true) {
-    const el = document.getElementById('message');
-    el.innerHTML = `<div class="${isError ? 'error' : 'success'}">${message}</div>`;
+  function showMessage(msg, isError = true) {
+    const el = document.getElementById("message");
+    el.innerHTML = `<div class="${isError ? "error" : "success"}">${msg}</div>`;
   }
 
   function validateWithdrawalCode(inputCode) {
-    return userWithdrawalConfig?.code === inputCode;
+    return userWithdrawalConfig && userWithdrawalConfig.code === inputCode;
   }
 
   async function processWithdrawal() {
     if (!isValidWithdrawalTime()) {
-      return showMessage("Les retraits ne sont autorisés qu'entre 9h et 17h");
+      showMessage("Les retraits sont autorisés entre 9h et 17h");
+      return;
     }
 
     if (!currentUser) {
-      return showMessage("Utilisateur non connecté");
+      showMessage("Veuillez vous connecter");
+      return;
     }
 
-    const amount = parseFloat(document.getElementById('amount').value);
-    const code = document.getElementById('withdrawalCode').value;
+    const amount = parseFloat(document.getElementById("amount").value);
+    const withdrawalCode = document.getElementById("withdrawalCode").value;
 
-    if (!validateWithdrawalCode(code)) {
-      return showMessage("Code de retrait invalide");
+    if (!validateWithdrawalCode(withdrawalCode)) {
+      showMessage("Code de retrait incorrect");
+      return;
     }
 
     if (isNaN(amount) || amount < MIN_WITHDRAWAL || amount > MAX_WITHDRAWAL) {
-      return showMessage("Montant invalide");
+      showMessage("Montant invalide");
+      return;
     }
 
     if (amount > currentBalance) {
-      return showMessage("Solde insuffisant");
+      showMessage("Solde insuffisant");
+      return;
     }
 
     const fees = Math.round(amount * 0.10);
-    const total = amount - fees;
+    const totalAmount = amount - fees;
     const newBalance = currentBalance - amount;
 
     try {
-      const uid = currentUser.uid;
-      const withdrawalRef = ref(db, `users/${uid}/withdrawalHistory`);
-      const newKey = push(withdrawalRef).key;
-
       const updates = {};
-      updates[`users/${uid}/solde`] = newBalance;
-      updates[`users/${uid}/withdrawalHistory/${newKey}`] = {
+      updates[`users/${currentUser.uid}/balance`] = newBalance;
+
+      const historyRef = ref(database, `users/${currentUser.uid}/withdrawalHistory`);
+      const newKey = push(historyRef).key;
+
+      updates[`users/${currentUser.uid}/withdrawalHistory/${newKey}`] = {
         amount,
         fees,
-        totalAmount: total,
-        timestamp: Date.now(),
-        status: 'Traitement Bancaire'
+        totalAmount,
+        timestamp: serverTimestamp(),
+        status: "Traitement Bancaire"
       };
 
-      await update(ref(db), updates);
+      await update(ref(database), updates);
+
       window.location.href = "historique retrait.html";
-    } catch (err) {
-      console.error("Erreur retrait:", err);
-      showMessage("Erreur lors du retrait. Veuillez réessayer.");
+    } catch (error) {
+      console.error("Erreur retrait:", error);
+      showMessage("Erreur lors du retrait. Réessayez.");
     }
   }
 
   function updateWithdrawalSummary() {
-    const amount = parseFloat(document.getElementById('amount').value) || 0;
-    const code = document.getElementById('withdrawalCode').value;
-    const isTimeValid = isValidWithdrawalTime();
-    const isAmountValid = amount >= MIN_WITHDRAWAL && amount <= MAX_WITHDRAWAL;
-    const isSufficient = amount <= currentBalance;
-    const isCode = !!code;
+    const amount = parseFloat(document.getElementById("amount").value) || 0;
+    const withdrawalCode = document.getElementById("withdrawalCode").value;
+    const summary = document.getElementById("withdrawal-summary");
+    const button = document.getElementById("withdrawal-button");
 
-    const canWithdraw = isTimeValid && isAmountValid && isSufficient && isCode;
-    document.getElementById('withdrawal-button').disabled = !canWithdraw;
+    const validTime = isValidWithdrawalTime();
+    const validAmount = amount >= MIN_WITHDRAWAL && amount <= MAX_WITHDRAWAL;
+    const sufficientBalance = amount <= currentBalance;
+    const hasCode = !!withdrawalCode;
 
-    if (!isTimeValid) {
-      showMessage("Les retraits sont autorisés de 9h à 17h");
+    button.disabled = !(validTime && validAmount && sufficientBalance && hasCode);
+
+    if (!validTime) {
+      showMessage("Les retraits sont autorisés entre 9h et 17h");
     }
 
-    const summary = document.getElementById('withdrawal-summary');
     if (amount > 0) {
       const fees = Math.round(amount * 0.10);
       const total = amount - fees;
-      document.getElementById('requested-amount').textContent = formatAmount(amount);
-      document.getElementById('fees-amount').textContent = formatAmount(fees);
-      document.getElementById('total-amount').textContent = formatAmount(total);
-      summary.classList.add('visible');
+
+      document.getElementById("requested-amount").textContent = formatAmount(amount);
+      document.getElementById("fees-amount").textContent = formatAmount(fees);
+      document.getElementById("total-amount").textContent = formatAmount(total);
+
+      summary.classList.add("visible");
     } else {
-      summary.classList.remove('visible');
+      summary.classList.remove("visible");
     }
   }
 
+  // Auth
   onAuthStateChanged(auth, (user) => {
     currentUser = user;
     if (user) {
       loadUserData(user.uid);
     } else {
-      document.getElementById('current-balance').textContent = "Non connecté";
-      showMessage("Veuillez vous connecter pour effectuer un retrait");
+      document.getElementById("current-balance").textContent = "Non connecté";
+      showMessage("Connectez-vous pour effectuer un retrait");
     }
   });
 
-  document.getElementById('amount').addEventListener('input', updateWithdrawalSummary);
-  document.getElementById('withdrawalCode').addEventListener('input', updateWithdrawalSummary);
-  document.getElementById('withdrawal-button').addEventListener('click', processWithdrawal);
+  // Événements
+  document.getElementById("amount").addEventListener("input", updateWithdrawalSummary);
+  document.getElementById("withdrawalCode").addEventListener("input", updateWithdrawalSummary);
+  document.getElementById("withdrawal-button").addEventListener("click", processWithdrawal);
 
   // Vérification initiale
   if (!isValidWithdrawalTime()) {
-    showMessage("Les retraits ne sont autorisés qu'entre 9h et 17h");
+    showMessage("Les retraits sont autorisés entre 9h et 17h");
   }
-</script> 
+</script>
 </body>
 </html>
